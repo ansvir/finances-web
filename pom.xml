@@ -11,6 +11,7 @@
     <groupId>org.tohant</groupId>
     <artifactId>finances-web</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
     <name>finances-web</name>
     <description>finances-web</description>
     <properties>
