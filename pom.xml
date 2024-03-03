@@ -11,7 +11,6 @@
     <groupId>org.tohant</groupId>
     <artifactId>finances-web</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
     <name>finances-web</name>
     <description>finances-web</description>
     <properties>
@@ -71,6 +70,11 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.heroku.sdk</groupId>
+                <artifactId>heroku-maven-plugin</artifactId>
+                <version>3.0.7</version>
             </plugin>
         </plugins>
     </build>
