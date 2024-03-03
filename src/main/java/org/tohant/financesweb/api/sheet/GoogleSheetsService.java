@@ -114,8 +114,10 @@ public class GoogleSheetsService {
     }
 
     private static List<PaymentDto> createFailedPayment(String message, int status) {
-        return List.of(new PaymentDto(null, null, new HttpResponseDto(message, status),
+        List<PaymentDto> payment = new ArrayList<>();
+        payment.add(new PaymentDto(null, null, new HttpResponseDto(message, status),
                 PaymentDto.Type.OTHER));
+        return payment;
     }
 
 }
