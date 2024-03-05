@@ -86,6 +86,42 @@ public class GoogleSheetsService {
         }
     }
 
+//    public void addPayment(PaymentDto paymentDto) {
+//        try {
+//            log.info("Add payment request execution...");
+//            final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+//            final String range = "Report!A2:C";
+//            Sheets service =
+//                    new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+//                            .setApplicationName(APPLICATION_NAME)
+//                            .build();
+//            ValueRange response = service.spreadsheets().values()
+//                    .get(SPREADSHEET_ID, range)
+//                    .execute();
+//            List<List<Object>> values = response.getValues();
+//            if (values == null || values.isEmpty()) {
+//                return createFailedPayment("No data found.", HttpStatus.NO_CONTENT.value());
+//            } else {
+//                List<PaymentDto> payments = new ArrayList<>();
+//                for (List<Object> value : values) {
+//                    for (int j = 0; j < values.get(0).size(); j += 2) {
+//                        payments.add(new PaymentDto(value.get(j).toString(),
+//                                BigDecimal.valueOf(Double.parseDouble(value.get(j + 1).toString())),
+//                                new HttpResponseDto("Payments found.", HttpStatus.OK.value()),
+//                                PaymentDto.Type.fromId(Integer.parseInt(value.get(j + 2).toString()))));
+//                    }
+//                }
+//                return payments;
+//            }
+//        } catch (IOException e) {
+//            return createFailedPayment("Internal server error. Details: " + e.getMessage(),
+//                    HttpStatus.INTERNAL_SERVER_ERROR.value());
+//        } catch (GeneralSecurityException e) {
+//            return createFailedPayment("Security error: " + e.getMessage(),
+//                    HttpStatus.INTERNAL_SERVER_ERROR.value());
+//        }
+//    }
+
     /**
      * Creates an authorized Credential object.
      *
