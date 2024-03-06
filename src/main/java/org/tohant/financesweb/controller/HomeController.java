@@ -23,21 +23,21 @@ public class HomeController {
     private final SheetsService localGoogleSheetsService;
 
     @RequestMapping(value = "/home", method = { RequestMethod.GET, RequestMethod.POST })
-    public String getMainPage(@RequestParam(defaultValue = "0") int page, Model model) {
-        model.addAttribute("payments", localGoogleSheetsService.getPayments(page));
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", localGoogleSheetsService.countPaged());
+    public String getMainPage(Model model) {
+        model.addAttribute("payments", localGoogleSheetsService.getPayments());
+//        model.addAttribute("currentPage", page);
+//        model.addAttribute("totalPages", localGoogleSheetsService.countPaged());
         return HOME_PAGE_NAME;
     }
 
     @PostMapping(value = "/payment")
-    public String addPayment(@RequestParam(defaultValue = "0") int page, PaymentDto payment, Model model) {
+    public String addPayment(PaymentDto payment, Model model) {
         HttpResponseDto response = localGoogleSheetsService.addPayment(payment);
         if (response.getStatusCode() != HttpStatus.OK.value()) {
             log.warn("Http status of adding payment response is not OK (200). Status is: "
                     + response.getStatusCode() + ". Body: " + response.getContent());
         }
-        return getMainPage(page, model);
+        return getMainPage(model);
     }
 
 }

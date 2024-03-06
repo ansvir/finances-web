@@ -3,6 +3,7 @@ package org.tohant.financesweb.api.model;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 @Data
@@ -15,6 +16,7 @@ public class PaymentDto {
     private BigDecimal amount;
     private HttpResponseDto response;
     private Type type;
+    private LocalDateTime dateTime = LocalDateTime.now();
 
     @Getter
     @RequiredArgsConstructor

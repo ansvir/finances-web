@@ -16,9 +16,8 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.format.datetime.joda.LocalDateTimeParser;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.tohant.financesweb.api.model.HttpResponseDto;
 import org.tohant.financesweb.api.model.PaymentDto;
@@ -29,11 +28,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,6 +42,8 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
     private static final Map<String, Object> CACHE = new ConcurrentHashMap<>();
 
     private static final String PAYMENTS_CACHE_KEY = "paymentsCache";
+
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-M-d H:mm:ss");
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -65,7 +67,7 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
             log.info("Get payments request execution...");
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
             final String sheetName = getSheetBasedOnUsername();
-            final String range = sheetName + "!A2:C";
+            final String range = sheetName + "!A2:D";
             Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
@@ -78,11 +80,12 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
             } else {
                 List<PaymentDto> payments = new ArrayList<>();
                 for (List<Object> value : values) {
-                    for (int j = 0; j < values.get(0).size(); j += 3) {
+                    for (int j = 0; j < values.get(0).size(); j += 4) {
                         payments.add(new PaymentDto(value.get(j).toString(),
                                 BigDecimal.valueOf(Double.parseDouble(value.get(j + 1).toString())),
                                 new HttpResponseDto("Payments found.", HttpStatus.OK.value()),
-                                PaymentDto.Type.fromId(Integer.parseInt(value.get(j + 2).toString()))));
+                                PaymentDto.Type.fromId(Integer.parseInt(value.get(j + 2).toString())),
+                                LocalDateTime.parse(value.get(j + 3).toString(), dateTimeFormatter)));
                     }
                 }
                 CACHE.put(PAYMENTS_CACHE_KEY, payments);
@@ -103,7 +106,7 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
             log.info("Add payment request execution...");
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
             final String sheetName = getSheetBasedOnUsername();
-            final String range = sheetName + "!A2:C";
+            final String range = sheetName + "!A2:D";
             Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
@@ -115,14 +118,14 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
             if (values == null || values.isEmpty()) {
                 ValueRange body = new ValueRange().setValues(newValues);
                 service.spreadsheets().values()
-                        .update(SPREADSHEET_ID, sheetName + "!A2:C2", body)
+                        .update(SPREADSHEET_ID, sheetName + "!A2:D2", body)
                         .setValueInputOption("RAW")
                         .execute();
             } else {
                 int lastRow = values.size();
                 ValueRange body = new ValueRange().setValues(newValues);
                 service.spreadsheets().values()
-                        .update(SPREADSHEET_ID, sheetName + "!A" + (lastRow + 2) + ":C" + (lastRow + 2), body)
+                        .update(SPREADSHEET_ID, sheetName + "!A" + (lastRow + 2) + ":D" + (lastRow + 2), body)
                         .setValueInputOption("RAW")
                         .execute();
             }
@@ -137,8 +140,11 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
     }
 
     private List<List<Object>> mapToRecords(PaymentDto paymentDto) {
+        String[] dateTime = paymentDto.getDateTime().toString().split("[.T]");
+        String plainDateTime = String.join(" ", dateTime[0], dateTime[1]);
         return List.of(List.of(paymentDto.getName(),
-                paymentDto.getAmount(), paymentDto.getType().getId()));
+                paymentDto.getAmount(), paymentDto.getType().getId(),
+                plainDateTime));
     }
 
     @Override
@@ -164,7 +170,7 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
         try {
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
             final String sheetName = getSheetBasedOnUsername();
-            final String range = sheetName + "!A2:C";
+            final String range = sheetName + "!A2:D";
             Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
@@ -213,7 +219,7 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
     private static List<PaymentDto> createFailedPayment(String message, int status) {
         List<PaymentDto> payment = new ArrayList<>();
         payment.add(new PaymentDto(null, null, new HttpResponseDto(message, status),
-                PaymentDto.Type.OTHER));
+                PaymentDto.Type.OTHER, null));
         return payment;
     }
 
