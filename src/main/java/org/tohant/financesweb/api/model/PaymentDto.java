@@ -21,7 +21,7 @@ public class PaymentDto {
     public enum Type {
 
         DEBT(1, "Долг"), OTHER(2, "Другое"), TAXES(3, "Квартплата"),
-        ENTERTAINMENTS(4, "Развлечения"), CONNECTION(5, "Связь");
+        ENTERTAINMENT(4, "Развлечения"), CONNECTION(5, "Связь");
 
         private final int id;
         private final String name;

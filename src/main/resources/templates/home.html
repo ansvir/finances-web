@@ -49,7 +49,7 @@
                     <img class="img-fluid" th:src="@{/public/img/icon-deal.png}" alt="Icon"
                          style="width: 30px; height: 30px;">
                 </div>
-                <h1 class="m-0 text-primary">Finances</h1>
+                <h1 class="m-0 text-primary">Финансы</h1>
             </a>
             <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
@@ -104,12 +104,51 @@
                                 <div class="col-md-4">
                                     <input type="number" th:name="amount" class="form-control border-0 py-3" placeholder="Сумма, BYN.">
                                 </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-dark border-0 w-100 py-3" type="submit">Добавить</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-dark border-0 w-100 py-3" type="submit">Add</button>
-                        </div>
                     </form>
+                </div>
+                <div class="row g-2">
+                    <h1>Все платежи</h1>
+                    <table class="table table-bordered table-dark">
+                        <thead>
+                        <tr>
+                            <th>Детали</th>
+                            <th>Сумма, BYN.</th>
+                            <th>Категория</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="payment : ${payments}">
+                            <td th:text="${payment.name}"></td>
+                            <td th:text="${payment.amount}"></td>
+                            <td th:text="${payment.type.name}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div>
+                        <ul class="pagination">
+                            <li th:class="${currentPage == 0} ? disabled">
+                                <a th:href="@{/payment?page=0}">Первая</a>
+                            </li>
+                            <li th:class="${currentPage > 0} ? '' : disabled">
+                                <a th:href="@{/payment?page=${currentPage - 1}}"><<</a>
+                            </li>
+                            <li th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}" th:class="${pageNumber == currentPage} ? active : ''">
+                                <a th:href="@{/payment?page=${pageNumber}}" th:text="${pageNumber + 1}"></a>
+                            </li>
+                            <li th:class="${currentPage < totalPages - 1} ? '' : disabled">
+                                <a th:href="@{/payment?page=${currentPage + 1}}">>></a>
+                            </li>
+                            <li th:class="${currentPage < totalPages - 1} ? '' : disabled">
+                                <a th:href="@{/payment?page=${totalPages - 1}}">Последняя</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -121,7 +160,7 @@
         <div class="container py-5">
             <div class="row g-5">
                 <div class="col-lg-3 col-md-6">
-                    <h5 class="text-white mb-4">Finances By Anton S.</h5>
+                    <h5 class="text-white mb-4">Финансы By Anton S.</h5>
                 </div>
             </div>
         </div>
