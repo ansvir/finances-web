@@ -9,8 +9,8 @@ public interface SheetsService {
 
     List<PaymentDto> getPayments();
     List<PaymentDto> getPayments(int page);
-    int countCached();
     int count();
+    int countPaged();
     HttpResponseDto addPayment(PaymentDto paymentDto);
 
 }

@@ -26,7 +26,7 @@ public class HomeController {
     public String getMainPage(@RequestParam(defaultValue = "0") int page, Model model) {
         model.addAttribute("payments", localGoogleSheetsService.getPayments(page));
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", localGoogleSheetsService.countCached());
+        model.addAttribute("totalPages", localGoogleSheetsService.countPaged());
         return HOME_PAGE_NAME;
     }
 

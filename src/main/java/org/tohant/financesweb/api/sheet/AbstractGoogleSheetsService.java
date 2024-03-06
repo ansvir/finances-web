@@ -17,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.tohant.financesweb.api.model.HttpResponseDto;
 import org.tohant.financesweb.api.model.PaymentDto;
 
@@ -61,7 +64,8 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
         try {
             log.info("Get payments request execution...");
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            final String range = "Report!A2:C";
+            final String sheetName = getSheetBasedOnUsername();
+            final String range = sheetName + "!A2:C";
             Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
@@ -98,7 +102,8 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
         try {
             log.info("Add payment request execution...");
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            final String range = "Report!A2:C";
+            final String sheetName = getSheetBasedOnUsername();
+            final String range = sheetName + "!A2:C";
             Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
@@ -110,14 +115,14 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
             if (values == null || values.isEmpty()) {
                 ValueRange body = new ValueRange().setValues(newValues);
                 service.spreadsheets().values()
-                        .update(SPREADSHEET_ID, "Report!A2:C2", body)
+                        .update(SPREADSHEET_ID, sheetName + "!A2:C2", body)
                         .setValueInputOption("RAW")
                         .execute();
             } else {
                 int lastRow = values.size();
                 ValueRange body = new ValueRange().setValues(newValues);
                 service.spreadsheets().values()
-                        .update(SPREADSHEET_ID, "Report!A" + (lastRow + 2) + ":C" + (lastRow + 2), body)
+                        .update(SPREADSHEET_ID, sheetName + "!A" + (lastRow + 2) + ":C" + (lastRow + 2), body)
                         .setValueInputOption("RAW")
                         .execute();
             }
@@ -139,13 +144,13 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
     @Override
     public List<PaymentDto> getPayments(int page) {
         int count = count();
-        int fromPage = page * PAGE_COUNT;
-        int toPage = Math.min(fromPage + PAGE_COUNT, count);
+        int from = page * PAGE_COUNT;
+        int to = Math.min(from + PAGE_COUNT, count);
         List<PaymentDto> cachedPayments = getFromCache();
         if (cachedPayments.size() != count) {
-            return getPayments().subList(fromPage, toPage);
+            return getPayments().subList(from, to);
         } else {
-            return cachedPayments.subList(fromPage, toPage);
+            return cachedPayments.subList(from, to);
         }
     }
 
@@ -154,7 +159,8 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
         log.info("Count request execution...");
         try {
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            final String range = "Report!A2:C";
+            final String sheetName = getSheetBasedOnUsername();
+            final String range = sheetName + "!A2:C";
             Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
@@ -169,8 +175,8 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
     }
 
     @Override
-    public int countCached() {
-        return getFromCache().size();
+    public int countPaged() {
+        return count() / PAGE_COUNT + 1;
     }
 
     /**
@@ -215,6 +221,10 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
             CACHE.put(PAYMENTS_CACHE_KEY, payments);
             return payments;
         }
+    }
+
+    private String getSheetBasedOnUsername() {
+        return "R_" + SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
 }

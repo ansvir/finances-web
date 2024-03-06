@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
 <head>
     <meta charset="utf-8">
@@ -35,7 +36,7 @@
     <div id="spinner"
          class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
         <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Loading...</span>
+            <span class="sr-only">Загрузка...</span>
         </div>
     </div>
     <!-- Spinner End -->
@@ -56,26 +57,12 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto">
-                    <a href="index.html" class="nav-item nav-link">Home</a>
-                    <a href="about.html" class="nav-item nav-link active">About</a>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Property</a>
-                        <div class="dropdown-menu rounded-0 m-0">
-                            <a href="property-list.html" class="dropdown-item">Property List</a>
-                            <a href="property-type.html" class="dropdown-item">Property Type</a>
-                            <a href="property-agent.html" class="dropdown-item">Property Agent</a>
-                        </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                        <div class="dropdown-menu rounded-0 m-0">
-                            <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                            <a href="error.html" class="dropdown-item">404 Error</a>
-                        </div>
-                    </div>
-                    <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    <a th:href="@{/logout}" class="nav-item nav-link active">Выйти</a>
+                    <a th:href="@{/home}" class="nav-item nav-link active">Привет,&nbsp;
+                        <span th:text="${#authentication.getName()}"></span>
+                    </a>
                 </div>
-                <a href="" class="btn btn-primary px-3 d-none d-lg-flex">Add Property</a>
+                <a th:href="@{/home}" class="btn btn-primary px-3 d-none d-lg-flex">Главная</a>
             </div>
         </nav>
     </div>
@@ -99,10 +86,12 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="text" th:name="name" class="form-control border-0 py-3" placeholder="Детали платежа">
+                                    <input type="text" th:name="name" class="form-control border-0 py-3"
+                                           placeholder="Детали платежа">
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="number" th:name="amount" class="form-control border-0 py-3" placeholder="Сумма, BYN.">
+                                    <input type="number" th:name="amount" class="form-control border-0 py-3"
+                                           placeholder="Сумма, BYN.">
                                 </div>
                                 <div class="col-md-2">
                                     <button class="btn btn-dark border-0 w-100 py-3" type="submit">Добавить</button>
@@ -129,25 +118,26 @@
                         </tr>
                         </tbody>
                     </table>
-
-                    <div>
-                        <ul class="pagination">
-                            <li th:class="${currentPage == 0} ? disabled">
-                                <a th:href="@{/payment?page=0}">Первая</a>
-                            </li>
-                            <li th:class="${currentPage > 0} ? '' : disabled">
-                                <a th:href="@{/payment?page=${currentPage - 1}}"><<</a>
-                            </li>
-                            <li th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}" th:class="${pageNumber == currentPage} ? active : ''">
-                                <a th:href="@{/payment?page=${pageNumber}}" th:text="${pageNumber + 1}"></a>
-                            </li>
-                            <li th:class="${currentPage < totalPages - 1} ? '' : disabled">
-                                <a th:href="@{/payment?page=${currentPage + 1}}">>></a>
-                            </li>
-                            <li th:class="${currentPage < totalPages - 1} ? '' : disabled">
-                                <a th:href="@{/payment?page=${totalPages - 1}}">Последняя</a>
-                            </li>
-                        </ul>
+                    <div class="row">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li th:if="${currentPage > 0}" class="page-item">
+                                    <a class="page-link" th:href="@{/home?page=__${currentPage - 1}__}" href="#" aria-label="Предыдущая">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Предыдущая</span>
+                                    </a>
+                                </li>
+                                <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}">
+                                    <a class="page-link" th:href="@{/home?page=__${pageNumber}__}" th:text="${pageNumber + 1}"></a>
+                                </li>
+                                <li th:if="${currentPage < totalPages - 1}" class="page-item">
+                                    <a class="page-link" th:href="@{/home?page=__${currentPage + 1}__}" aria-label="Следующая">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Следующая</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
