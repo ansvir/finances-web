@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import org.tohant.financesweb.api.model.HttpResponseDto;
 import org.tohant.financesweb.api.model.PaymentDto;
 
@@ -32,15 +31,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
-public class GoogleSheetsService {
-    private static final String APPLICATION_NAME = "finances";
-    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    private static final String TOKENS_DIRECTORY_PATH = "tokens";
-    private static final String SPREADSHEET_ID = "1hPSjkwrVABAE6n8cI4k7L6KEtiDIgIN5PoWFO8rh9R0";
-
-    private final ResourceLoader resourceLoader;
+public abstract class AbstractGoogleSheetsService implements SheetsService {
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -48,7 +40,14 @@ public class GoogleSheetsService {
      */
     private static final List<String> SCOPES =
             Collections.singletonList(SheetsScopes.SPREADSHEETS);
-    private static final String CREDENTIALS_FILE_PATH = "classpath:google_api_creds.json";
+    private static final String APPLICATION_NAME = "finances";
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+    private static final String TOKENS_DIRECTORY_PATH = "tokens";
+    private static final String SPREADSHEET_ID = "1hPSjkwrVABAE6n8cI4k7L6KEtiDIgIN5PoWFO8rh9R0";
+
+    private final ResourceLoader resourceLoader;
+
+    public abstract String credentialFilePath();
 
     public List<PaymentDto> getPayments() {
         try {
@@ -68,7 +67,7 @@ public class GoogleSheetsService {
             } else {
                 List<PaymentDto> payments = new ArrayList<>();
                 for (List<Object> value : values) {
-                    for (int j = 0; j < values.get(0).size(); j += 2) {
+                    for (int j = 0; j < values.get(0).size(); j += 3) {
                         payments.add(new PaymentDto(value.get(j).toString(),
                                 BigDecimal.valueOf(Double.parseDouble(value.get(j + 1).toString())),
                                 new HttpResponseDto("Payments found.", HttpStatus.OK.value()),
@@ -86,42 +85,6 @@ public class GoogleSheetsService {
         }
     }
 
-//    public void addPayment(PaymentDto paymentDto) {
-//        try {
-//            log.info("Add payment request execution...");
-//            final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-//            final String range = "Report!A2:C";
-//            Sheets service =
-//                    new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-//                            .setApplicationName(APPLICATION_NAME)
-//                            .build();
-//            ValueRange response = service.spreadsheets().values()
-//                    .get(SPREADSHEET_ID, range)
-//                    .execute();
-//            List<List<Object>> values = response.getValues();
-//            if (values == null || values.isEmpty()) {
-//                return createFailedPayment("No data found.", HttpStatus.NO_CONTENT.value());
-//            } else {
-//                List<PaymentDto> payments = new ArrayList<>();
-//                for (List<Object> value : values) {
-//                    for (int j = 0; j < values.get(0).size(); j += 2) {
-//                        payments.add(new PaymentDto(value.get(j).toString(),
-//                                BigDecimal.valueOf(Double.parseDouble(value.get(j + 1).toString())),
-//                                new HttpResponseDto("Payments found.", HttpStatus.OK.value()),
-//                                PaymentDto.Type.fromId(Integer.parseInt(value.get(j + 2).toString()))));
-//                    }
-//                }
-//                return payments;
-//            }
-//        } catch (IOException e) {
-//            return createFailedPayment("Internal server error. Details: " + e.getMessage(),
-//                    HttpStatus.INTERNAL_SERVER_ERROR.value());
-//        } catch (GeneralSecurityException e) {
-//            return createFailedPayment("Security error: " + e.getMessage(),
-//                    HttpStatus.INTERNAL_SERVER_ERROR.value());
-//        }
-//    }
-
     /**
      * Creates an authorized Credential object.
      *
@@ -132,9 +95,9 @@ public class GoogleSheetsService {
     private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT)
             throws IOException {
         // Load client secrets.
-        InputStream in = resourceLoader.getResource(CREDENTIALS_FILE_PATH).getInputStream();
+        InputStream in = resourceLoader.getResource(credentialFilePath()).getInputStream();
         if (in == null) {
-            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+            throw new FileNotFoundException("Resource not found: " + credentialFilePath());
         }
         GoogleClientSecrets clientSecrets =
                 GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));

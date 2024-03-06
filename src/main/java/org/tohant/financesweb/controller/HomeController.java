@@ -6,13 +6,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.tohant.financesweb.api.sheet.GoogleSheetsService;
+import org.tohant.financesweb.api.sheet.SheetsService;
 
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final GoogleSheetsService googleSheetsService;
+    private final SheetsService localGoogleSheetsService;
 
     @RequestMapping(value = "/home", method = { RequestMethod.GET, RequestMethod.POST })
     public String getMainPage() {
@@ -22,7 +22,7 @@ public class HomeController {
     @PostMapping(value = "payment")
     public String addPayment(Model model) {
         model.asMap().values().forEach(System.out::println);
-        googleSheetsService.getPayments()
+        localGoogleSheetsService.getPayments()
                 .forEach(p -> System.out.println(p.getName() + " " + p.getType().getName()));
         return "home";
     }
