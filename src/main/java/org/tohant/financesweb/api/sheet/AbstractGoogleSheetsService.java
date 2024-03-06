@@ -144,6 +144,10 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
     @Override
     public List<PaymentDto> getPayments(int page) {
         int count = count();
+        if (count == -1) {
+            log.error("Error occurred while counting payments.");
+            return List.of();
+        }
         int from = page * PAGE_COUNT;
         int to = Math.min(from + PAGE_COUNT, count);
         List<PaymentDto> cachedPayments = getFromCache();
