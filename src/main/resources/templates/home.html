@@ -140,8 +140,11 @@
                                 <td th:text="${payment.date}"></td>
                                 <td>
                                     <div class="progress" role="progressbar" aria-label="Сравнение с предыдущим месяцем"
-                                         th:aria-valuenow="${payment.total}" aria-valuemin="0" aria-valuemax="100">
-                                        <div class="progress-bar" th:style="'width: ' + ${payment.total} + '%'"></div>
+                                         th:aria-valuenow="${payment.displayValue}" aria-valuemin="0" aria-valuemax="100">
+                                        <div th:if="${payment.displayValue < 0}" class="progress-bar bg-info overflow-visible link-dark"
+                                             th:text="${payment.displayValue} + '%'" th:style="'width: ' + ${payment.total} + '%'"></div>
+                                        <div th:if="${payment.displayValue >= 0}" class="progress-bar bg-warning overflow-visible link-dark"
+                                             th:text="${payment.displayValue} + '%'" th:style="'width: ' + ${payment.total} + '%'"></div>
                                     </div>
                                 </td>
                             </tr>

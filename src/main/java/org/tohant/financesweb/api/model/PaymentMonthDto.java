@@ -14,5 +14,6 @@ public class PaymentMonthDto {
 
     private LocalDate date;
     private BigDecimal total;
+    private Integer displayValue;
 
 }
