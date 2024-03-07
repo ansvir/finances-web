@@ -8,7 +8,7 @@ import java.util.List;
 public interface SheetsService {
 
     List<PaymentDto> getPayments();
-    List<PaymentDto> getPayments(int page);
+    List<PaymentDto> getPaymentsFromCache();
     int count();
     int countPaged();
     HttpResponseDto addPayment(PaymentDto paymentDto);

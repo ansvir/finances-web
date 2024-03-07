@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -143,24 +145,17 @@ public abstract class AbstractGoogleSheetsService implements SheetsService {
         String[] dateTime = paymentDto.getDateTime().toString().split("[.T]");
         String plainDateTime = String.join(" ", dateTime[0], dateTime[1]);
         return List.of(List.of(paymentDto.getName(),
-                paymentDto.getAmount(), paymentDto.getType().getId(),
+                paymentDto.getAmount().setScale(2, RoundingMode.HALF_UP),
+                paymentDto.getType().getId(),
                 plainDateTime));
     }
 
     @Override
-    public List<PaymentDto> getPayments(int page) {
-        int count = count();
-        if (count == -1) {
-            log.error("Error occurred while counting payments.");
-            return List.of();
-        }
-        int from = page * PAGE_COUNT;
-        int to = Math.min(from + PAGE_COUNT, count);
-        List<PaymentDto> cachedPayments = getFromCache();
-        if (cachedPayments.size() != count) {
-            return getPayments().subList(from, to);
+    public List<PaymentDto> getPaymentsFromCache() {
+        if (CACHE.get(PAYMENTS_CACHE_KEY) != null) {
+            return (List<PaymentDto>) CACHE.get(PAYMENTS_CACHE_KEY);
         } else {
-            return cachedPayments.subList(from, to);
+            return getPayments();
         }
     }
 
