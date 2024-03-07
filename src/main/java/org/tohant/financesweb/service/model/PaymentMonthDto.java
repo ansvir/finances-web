@@ -1,4 +1,4 @@
-package org.tohant.financesweb.api.model;
+package org.tohant.financesweb.service.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

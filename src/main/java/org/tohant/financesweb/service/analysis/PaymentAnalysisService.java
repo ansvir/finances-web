@@ -1,11 +1,11 @@
-package org.tohant.financesweb.api.analysis;
+package org.tohant.financesweb.service.analysis;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.tohant.financesweb.api.model.PaymentDto;
-import org.tohant.financesweb.api.model.PaymentMonthDto;
-import org.tohant.financesweb.api.sheet.SheetsService;
+import org.tohant.financesweb.service.model.PaymentDto;
+import org.tohant.financesweb.service.model.PaymentMonthDto;
+import org.tohant.financesweb.service.sheet.SheetService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PaymentAnalysisService {
 
-    private final SheetsService localGoogleSheetsService;
+    private final SheetService localGoogleSheetsService;
 
     public List<PaymentMonthDto> getPaymentsByMonths() {
         List<PaymentDto> payments = localGoogleSheetsService.getPaymentsFromCache();

@@ -60,7 +60,7 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto">
                     <a th:href="@{/logout}" class="nav-item nav-link active">Выйти</a>
-                    <a th:href="@{/home}" class="nav-item nav-link active">Привет,&nbsp;
+                    <a th:href="@{/profile}" class="nav-item nav-link active">Привет,&nbsp;
                         <span th:text="${#authentication.getName()}"></span>
                     </a>
                 </div>
@@ -80,11 +80,7 @@
                             <div class="row g-2">
                                 <div class="col-md-2">
                                     <select th:name="type" class="form-select border-0 py-3">
-                                        <option th:value="DEBT" selected>Долг</option>
-                                        <option th:value="OTHER">Другое</option>
-                                        <option th:value="TAXES">Квартплата</option>
-                                        <option th:value="ENTERTAINMENT">Развлечения</option>
-                                        <option th:value="CONNECTION">Связь</option>
+                                        <option th:each="category : ${categories}" th:text="${category.getName()}"></option>
                                     </select>
                                 </div>
                                 <div class="col-md-2">
@@ -118,7 +114,7 @@
                             <tr th:each="payment : ${payments}">
                                 <td th:text="${payment.name}"></td>
                                 <td th:text="${payment.amount}"></td>
-                                <td th:text="${payment.type.name}"></td>
+                                <td th:text="${payment.category.name}"></td>
                                 <td th:text="${payment.dateTime}"></td>
                             </tr>
                             </tbody>

@@ -1,22 +1,20 @@
-package org.tohant.financesweb.api.model;
+package org.tohant.financesweb.service.model;
 
 import lombok.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentDto {
+public class CategoryDto extends HttpResponseDto {
 
-
+    private Integer id;
     private String name;
-    private BigDecimal amount;
-    private HttpResponseDto response;
-    private Type type;
-    private LocalDateTime dateTime = LocalDateTime.now();
+    private Integer priority;
 
     @Getter
     @RequiredArgsConstructor
@@ -34,6 +32,16 @@ public class PaymentDto {
                     .orElseThrow(() -> new IllegalArgumentException("No such Payment type with id: " + id));
         }
 
+        public static List<CategoryDto> collectAll() {
+            return Arrays.stream(values())
+                    .map(type -> new CategoryDto(type.id, type.name, type.id))
+                    .collect(Collectors.toList());
+        }
+
+    }
+
+    public static CategoryDto create(Integer id, String name, Integer priority) {
+        return new CategoryDto(id, name, priority);
     }
 
 }
