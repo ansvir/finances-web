@@ -8,7 +8,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -30,19 +35,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("toha2456")
-                .roles("USER")
-                .build();
-        UserDetails user2 = User.withDefaultPasswordEncoder()
-                .username("nastysha")
-                .password("aniasti")
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user, user2);
+    public UserDetailsService userDetailsService(DataSource dataSource) {
+        JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
+        manager.setUsersByUsernameQuery("SELECT * FROM app_user WHERE username LIKE ?");
+        manager.setAuthoritiesByUsernameQuery("SELECT * FROM authorities WHERE username LIKE ?");
+        manager.setGroupAuthoritiesSql("SELECT * FROM group_authorities WHERE group_id = ?");
+        manager.setGroupAuthoritiesByUsernameQuery("SELECT * FROM group_authorities ga" +
+                "INNER JOIN authorities a ON ga.authority = a.authority " +
+                "WHERE a.username LIKE ?");
+        return manager;
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 }

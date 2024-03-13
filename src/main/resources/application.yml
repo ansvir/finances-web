@@ -1,36 +1,31 @@
 spring:
   profiles:
     active: dev
----
-spring:
-  profiles: dev
   datasource:
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: root
     url: jdbc:postgresql://localhost:5432/finances
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    properties:
-      hibernate:
-        temp:
-          use_jdbc_metadata_defaults: false
-
----
-spring:
-  profiles: prod
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: root
-    url: jdbc:postgresql://localhost:5432/finances
+    initialization-mode: always
+    schema: classpath:sql/schema.sql
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: true
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        hbm2ddl.import_files: sql/schema.sql
+        hbm2ddl.import_files_sql_extractor: org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
         temp:
           use_jdbc_metadata_defaults: false
+---
+spring:
+  profiles: dev
+  datasource:
+    data: classpath:sql/test-data.sql
+---
+spring:
+  profiles: prod
+  datasource:
+    data: classpath:sql/data.sql

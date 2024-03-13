@@ -62,7 +62,7 @@
                 <div class="navbar-nav ms-auto">
                     <a th:href="@{/logout}" class="nav-item nav-link active">Выйти</a>
                     <a th:href="@{/profile}" class="nav-item nav-link active">Привет,&nbsp;
-                        <span th:text="${#authentication.getName()}"></span>
+                        <span th:text="${#authentication.name}"></span>
                     </a>
                 </div>
                 <a th:href="@{/home}" class="btn btn-primary px-3 d-none d-lg-flex">Главная</a>
@@ -90,13 +90,14 @@
                                         <li class="list-group-item" data-id="3">Квартплата</li>
                                         <li class="list-group-item" data-id="4">Развлечения</li>
                                         <li class="list-group-item" data-id="5">Связь</li>
+                                        <input type="hidden" name="ids"/>
                                     </ul>
                                 </div>
                             </div>
                             <div class="row g-2">
                                 <div class="col-md-2">
-                                    <input type="submit" th:name="ids" th:text="'Подтвердить'"
-                                           class="form-control border-0 py-3">
+                                    <button type="submit"
+                                            class="form-control border-0 py-3">Подтвердить</button>
                                 </div>
                             </div>
                         </div>

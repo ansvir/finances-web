@@ -15,8 +15,8 @@ public class CategoryMapper {
     }
 
     public Category toEntity(CategoryDto categoryDto) {
-        return new Category(categoryDto.getId().longValue(),
-                categoryDto.getName(), categoryDto.getPriority());
+        return new Category(Long.parseLong(categoryDto.getId()),
+                categoryDto.getName(), Integer.parseInt(categoryDto.getPriority()));
     }
 
 }

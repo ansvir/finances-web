@@ -61,7 +61,7 @@
                 <div class="navbar-nav ms-auto">
                     <a th:href="@{/logout}" class="nav-item nav-link active">Выйти</a>
                     <a th:href="@{/profile}" class="nav-item nav-link active">Привет,&nbsp;
-                        <span th:text="${#authentication.getName()}"></span>
+                        <span th:text="${#authentication.name}"></span>
                     </a>
                 </div>
                 <a th:href="@{/home}" class="btn btn-primary px-3 d-none d-lg-flex">Главная</a>
@@ -79,8 +79,8 @@
                         <div class="col-md-12">
                             <div class="row g-2">
                                 <div class="col-md-2">
-                                    <select th:name="type" class="form-select border-0 py-3">
-                                        <option th:each="category : ${categories}" th:text="${category.getName()}"></option>
+                                    <select th:name="category.id" class="form-select border-0 py-3">
+                                        <option th:selected="${categories.get(0).id}" th:value="${category.id}" th:each="category : ${categories}" th:text="${category.name}"></option>
                                     </select>
                                 </div>
                                 <div class="col-md-2">
@@ -115,7 +115,7 @@
                                 <td th:text="${payment.name}"></td>
                                 <td th:text="${payment.amount}"></td>
                                 <td th:text="${payment.category.name}"></td>
-                                <td th:text="${payment.dateTime}"></td>
+                                <td th:text="${#strings.listJoin(payment.dateTime.split('T'), ' ')}"></td>
                             </tr>
                             </tbody>
                         </table>

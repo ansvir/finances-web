@@ -6,15 +6,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDto extends HttpResponseDto {
+@AllArgsConstructor
+public class CategoryDto {
 
-    private Integer id;
+    private String id;
     private String name;
-    private Integer priority;
+    private String priority;
 
     @Getter
     @RequiredArgsConstructor
@@ -34,14 +33,14 @@ public class CategoryDto extends HttpResponseDto {
 
         public static List<CategoryDto> collectAll() {
             return Arrays.stream(values())
-                    .map(type -> new CategoryDto(type.id, type.name, type.id))
+                    .map(type -> new CategoryDto(String.valueOf(type.id), type.name, String.valueOf(type.id)))
                     .collect(Collectors.toList());
         }
 
     }
 
     public static CategoryDto create(Integer id, String name, Integer priority) {
-        return new CategoryDto(id, name, priority);
+        return new CategoryDto(String.valueOf(id), name, String.valueOf(priority));
     }
 
 }

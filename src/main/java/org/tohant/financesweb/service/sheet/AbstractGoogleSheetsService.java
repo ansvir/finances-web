@@ -40,8 +40,6 @@ public abstract class AbstractGoogleSheetsService implements SheetService {
 
     private static final String PAYMENTS_CACHE_KEY = "paymentsCache";
 
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-M-d H:mm:ss");
-
     /**
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
@@ -282,19 +280,19 @@ public abstract class AbstractGoogleSheetsService implements SheetService {
     private static List<PaymentDto> createFailedPayment(String message, int status) {
         List<PaymentDto> payments = new ArrayList<>();
         PaymentDto payment = new PaymentDto(null, null,
-                new CategoryDto(CategoryDto.Type.OTHER.getId(), CategoryDto.Type.OTHER.getName(), null), // todo change priority
+                new CategoryDto(String.valueOf(CategoryDto.Type.OTHER.getId()), CategoryDto.Type.OTHER.getName(), null), // todo change priority
                 null);
-        payment.setContent(message);
-        payment.setStatusCode(status);
+//        payment.setContent(message);
+//        payment.setStatusCode(status);
         payments.add(payment);
         return payments;
     }
 
     private static List<CategoryDto> createFailedCategory(String message, int status) {
         List<CategoryDto> categories = new ArrayList<>();
-        CategoryDto category = new CategoryDto(CategoryDto.Type.OTHER.getId(), CategoryDto.Type.OTHER.getName(), null); // todo change priority
-        category.setContent(message);
-        category.setStatusCode(status);
+        CategoryDto category = new CategoryDto(String.valueOf(CategoryDto.Type.OTHER.getId()), CategoryDto.Type.OTHER.getName(), null); // todo change priority
+//        category.setContent(message);
+//        category.setStatusCode(status);
         return categories;
     }
 
