@@ -8,11 +8,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.tohant.financesweb.service.analysis.PaymentAnalysisService;
 import org.tohant.financesweb.service.database.PaymentService;
 import org.tohant.financesweb.service.database.UserService;
 import org.tohant.financesweb.service.model.PaymentDto;
 import org.tohant.financesweb.service.model.PeriodDto;
+import org.tohant.financesweb.util.FinancesThymeleafUtil;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,7 +33,19 @@ public class HomeController {
     private final PaymentAnalysisService paymentAnalysisService;
 
     @RequestMapping(value = "/home", method = { RequestMethod.GET, RequestMethod.POST })
-    public String getMainPage(PeriodDto periodDto, Model model) {
+    public ModelAndView getMainPage(PeriodDto periodDto, Model model) {
+        populateModel(periodDto, model);
+        return FinancesThymeleafUtil.buildMav(HOME_PAGE_NAME, model);
+    }
+
+    @PostMapping(value = "/payment")
+    public ModelAndView addPayment(PeriodDto periodDto, PaymentDto payment, Model model) {
+        paymentService.save(payment);
+        populateModel(periodDto, model);
+        return FinancesThymeleafUtil.buildMav(HOME_PAGE_NAME, model);
+    }
+
+    private void populateModel(PeriodDto periodDto, Model model) {
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         List<PaymentDto> payments = paymentService.findAll();
         model.addAttribute("payments", payments);
@@ -39,7 +53,7 @@ public class HomeController {
         model.addAttribute("categories", userService.findByUsername(currentUser).getCategories());
         List<LocalDate> extremumDates = extractExtremumDates(payments);
         if (periodDto.getPrioritiesDateFrom() == null
-        || periodDto.getPrioritiesDateTo() == null) {
+                || periodDto.getPrioritiesDateTo() == null) {
             LocalDate from = extremumDates.get(0);
             LocalDate to = extremumDates.get(1);
             model.addAttribute("paymentsByPeriod", paymentService.findAllByPeriodGroupedByCategories(from, to));
@@ -52,13 +66,6 @@ public class HomeController {
             model.addAttribute("allPaymentsByPeriod", paymentAnalysisService.getPaymentsByPeriod(payments,
                     LocalDate.parse(periodDto.getPrioritiesDateFrom()), LocalDate.parse(periodDto.getPrioritiesDateTo())));
         }
-        return HOME_PAGE_NAME;
-    }
-
-    @PostMapping(value = "/payment")
-    public String addPayment(PaymentDto payment) {
-        paymentService.save(payment);
-        return "redirect:/" + HOME_PAGE_NAME;
     }
 
     private List<LocalDate> extractExtremumDates(List<PaymentDto> payments) {

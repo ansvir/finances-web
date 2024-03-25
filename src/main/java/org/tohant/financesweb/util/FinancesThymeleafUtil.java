@@ -1,6 +1,9 @@
 package org.tohant.financesweb.util;
 
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.ModelAndView;
 import org.tohant.financesweb.service.model.PaymentDto;
 import org.tohant.financesweb.service.model.PaymentMonthDto;
 
@@ -25,6 +28,12 @@ public class FinancesThymeleafUtil {
                     return first.isBefore(second) ? 1 : first.isEqual(second)
                             ? 0 : -1;
                 });
+    }
+
+    public static ModelAndView buildMav(String viewName, Model model) {
+        ModelAndView modelAndView = new ModelAndView(viewName);
+        modelAndView.addAllObjects(model.asMap());
+        return modelAndView;
     }
 
 }

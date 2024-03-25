@@ -7,8 +7,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.tohant.financesweb.service.database.CategoryService;
 import org.tohant.financesweb.service.model.CategoriesRearrangePrioritiesDto;
+import org.tohant.financesweb.util.FinancesThymeleafUtil;
 
 import java.util.stream.Collectors;
 
@@ -22,25 +24,25 @@ public class ProfileController {
     private final CategoryService categoryService;
 
     @GetMapping(value = "/profile")
-    public String getMainPage(Model model) {
+    public ModelAndView getMainPage(Model model) {
         populateModel(model);
-        return PROFILE_PAGE_NAME;
+        return FinancesThymeleafUtil.buildMav(PROFILE_PAGE_NAME, model);
     }
 
     @PostMapping(value = "/profile/category/rearrange")
-    public String updatePriorities(CategoriesRearrangePrioritiesDto priorities, Model model) {
+    public ModelAndView updatePriorities(CategoriesRearrangePrioritiesDto priorities, Model model) {
         categoryService.rearrangeCategories(priorities.getPriorities().stream()
                 .map(Integer::longValue)
                 .collect(Collectors.toList()));
         populateModel(model);
-        return "redirect:/" + PROFILE_PAGE_NAME;
+        return FinancesThymeleafUtil.buildMav(PROFILE_PAGE_NAME, model);
     }
 
     @PostMapping(value = "/profile/category/add")
-    public String addPriority(@RequestParam(name = "default-modal-input") String categoryName, Model model) {
+    public ModelAndView addPriority(@RequestParam(name = "default-modal-input") String categoryName, Model model) {
         categoryService.addCategory(categoryName);
         populateModel(model);
-        return "redirect:/" + PROFILE_PAGE_NAME;
+        return FinancesThymeleafUtil.buildMav(PROFILE_PAGE_NAME, model);
     }
 
 

@@ -23,7 +23,6 @@ public class UserService implements IService<UserDto, Long> {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final CategoryMapper categoryMapper;
 
     @Override
     public List<UserDto> findAll() {
