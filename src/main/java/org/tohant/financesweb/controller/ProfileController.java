@@ -6,10 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.tohant.financesweb.service.database.CategoryService;
 import org.tohant.financesweb.service.model.CategoriesRearrangePrioritiesDto;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,6 +35,14 @@ public class ProfileController {
         populateModel(model);
         return "redirect:/" + PROFILE_PAGE_NAME;
     }
+
+    @PostMapping(value = "/profile/category/add")
+    public String addPriority(@RequestParam(name = "default-modal-input") String categoryName, Model model) {
+        categoryService.addCategory(categoryName);
+        populateModel(model);
+        return "redirect:/" + PROFILE_PAGE_NAME;
+    }
+
 
     private void populateModel(Model model) {
         model.addAttribute("categories", categoryService.findAllByCurrentUserOrderByPriority());

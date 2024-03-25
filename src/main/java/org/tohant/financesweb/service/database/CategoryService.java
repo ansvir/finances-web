@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tohant.financesweb.mapper.CategoryMapper;
 import org.tohant.financesweb.repository.db.CategoryRepository;
+import org.tohant.financesweb.repository.db.ProfileRepository;
 import org.tohant.financesweb.repository.entity.Category;
 import org.tohant.financesweb.service.IService;
 import org.tohant.financesweb.service.model.CategoryDto;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +25,7 @@ public class CategoryService implements IService<CategoryDto, Long> {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final ProfileRepository profileRepository;
 
     @Override
     public List<CategoryDto> findAll() {
@@ -81,6 +84,24 @@ public class CategoryService implements IService<CategoryDto, Long> {
                 .map(categoryMapper::toEntity)
                 .collect(Collectors.toList());
         categoryRepository.saveAll(updatedCategories);
+    }
+
+    public void addCategory(String categoryName) {
+        long categoriesCount = categoryRepository.count();
+        Category category = new Category();
+        category.setName(categoryName);
+        category.setPriority((int) (categoriesCount + 1));
+        String currentUser = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+        profileRepository.findAll().stream()
+                .filter(profile -> profile.getUser().getUsername().equals(currentUser))
+                .findFirst()
+                .map(profile -> {
+                    Category savedCategory = categoryRepository.save(category);
+                    profile.getCategories().add(savedCategory);
+                    return profile;
+                })
+                .orElseThrow(() -> new EntityNotFoundException("User with username: " + currentUser + " doesn't exist."));
     }
 
 }

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Финансы - Полная версия навигационной панели</title>
+</head>
+<body>
+<nav class="desktop navbar nav-bar navbar-expand bg-white navbar-light py-0 px-4">
+    <div class="container-fluid bg-transparent">
+        <a th:href="@{/home}" class="navbar-brand d-flex align-items-center text-center">
+            <div class="icon p-2 me-2">
+                <img class="img-fluid" th:src="@{/public/img/logo.svg}" alt="Логотип приложения"
+                     style="width: 30px; height: 30px;">
+            </div>
+            <h1 class="m-0 text-primary">Финансы</h1>
+        </a>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto">
+                <a th:href="@{/logout}" class="nav-item btn btn-dark px-3 d-none d-lg-flex">Выйти</a>
+                <a th:href="@{/profile}" class="nav-item btn btn-dark px-3 d-none d-lg-flex mx-2">Привет,&nbsp;
+                    <span th:text="${#authentication.name}"></span>
+                </a>
+            </div>
+            <a th:href="@{/home}" class="btn btn-primary px-3 d-none d-lg-flex">Главная</a>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Финансы - Мобильная навигационная панель</title>
+</head>
+<body>
+<nav th:fragment="mobile-navbar" class="mobile navbar fixed-bottom navbar-expand bg-dark">
+        <ul class="justify-content-around align-content-around nav w-100">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/home}">
+                    <img alt="Кнопка 'Домой'" class="img-fluid" th:src="@{public/img/home.svg}"/>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/profile}">
+                    <img alt="Кнопка профиля" class="img-fluid " th:src="@{public/img/profile.svg}"/>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/logout}">
+                    <img alt="Кнопка выйти" class="img-fluid" th:src="@{public/img/logout.svg}"/>
+                </a>
+            </li>
+        </ul>
+</nav>
+</body>
+</html>

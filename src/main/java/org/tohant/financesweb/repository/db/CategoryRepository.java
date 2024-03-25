@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    @Query("SELECT c FROM Category c JOIN Payment p ON p.category.id = c.id" +
+    @Query("SELECT c FROM User u JOIN Profile p ON p.user.username = u.username JOIN p.categories c" +
             " WHERE p.user.username = :username GROUP BY c ORDER BY c.priority")
     List<Category> findAllByUsernameOrderByPriority(String username);
 }

@@ -44,29 +44,7 @@
     <!-- Spinner End -->
 
     <!-- Navbar Start -->
-    <div class="container-fluid nav-bar bg-transparent">
-        <nav class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4">
-            <a th:href="@{/home}" class="navbar-brand d-flex align-items-center text-center">
-                <div class="icon p-2 me-2">
-                    <img class="img-fluid" th:src="@{/public/img/icon-deal.png}" alt="Icon"
-                         style="width: 30px; height: 30px;">
-                </div>
-                <h1 class="m-0 text-primary">Финансы</h1>
-            </a>
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <div class="navbar-nav ms-auto">
-                    <a th:href="@{/logout}" class="nav-item nav-link active">Выйти</a>
-                    <a th:href="@{/profile}" class="nav-item nav-link active">Привет,&nbsp;
-                        <span th:text="${#authentication.name}"></span>
-                    </a>
-                </div>
-                <a th:href="@{/home}" class="btn btn-primary px-3 d-none d-lg-flex">Главная</a>
-            </div>
-        </nav>
-    </div>
+    <nav th:replace="fragments/desktop-navbar.html :: nav"></nav>
     <!-- Navbar End -->
 
     <div sec:authorize="isAuthenticated()">
@@ -78,20 +56,23 @@
                         <input type="hidden" name="priorities"/>
                         <div class="col-md-12">
                             <h2>Мои приоритеты</h2>
-                            <div class="row g-2">
+                            <div class="row">
                                 <div class="col-md-8">
                                     <ul id="sortable-list" class="list-group">
-                                        <li th:each="category : ${categories}" class="list-group-item"
+                                        <li th:each="category : ${categories}" class="list-group-item py-3"
                                             th:text="${category.name}"
                                             th:data-id="${category.id}"></li>
                                     </ul>
                                 </div>
                                 <div class="col-md-4">
+                                    <button id="addPriority" type="button" data-bs-toggle="modal" data-bs-target="#default-modal"
+                                            class="btn btn-dark w-100 border-0 py-4">Добавить
+                                    </button>
                                     <button id="submitPriorities" type="submit"
-                                            class="btn btn-dark w-100 border-0 py-3 mb-2">Подтвердить
+                                            class="btn btn-dark w-100 border-0 py-4 my-2">Подтвердить
                                     </button>
                                     <button id="resetPriorities" type="button"
-                                            class="form-control border-0 py-3">Сбросить
+                                            class="form-control border-0 py-5">Сбросить
                                     </button>
                                 </div>
                             </div>
@@ -103,8 +84,11 @@
         <!-- Search End -->
 
     </div>
+    <div th:replace="fragments/default-modal.html :: default-modal(title='Добавить категорию', field='', defValue='Новая категория', onSubmitUrl='profile/category/add')"></div>
     <!-- Footer Start -->
-    <footer th:insert="fragments/footer.html"></footer>
+    <footer th:insert="fragments/footer.html :: footer"></footer>
+
+    <nav th:replace="fragments/mobile-navbar.html :: mobile-navbar"></nav>
     <!-- Footer End -->
 
 
@@ -138,6 +122,10 @@
         $('#resetPriorities').on('click', function (e) {
             sortable.sort(initialList);
         });
+
+        document.getElementById('default-modal').addEventListener('shown.bs.modal', function () {
+            document.getElementById('default-modal-input').focus()
+        })
     });
 </script>
 </body>
