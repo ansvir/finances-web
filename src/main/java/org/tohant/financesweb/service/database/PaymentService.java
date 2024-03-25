@@ -38,7 +38,9 @@ public class PaymentService implements IService<PaymentDto, Long> {
 
     @Override
     public List<PaymentDto> findAll() {
-        return paymentRepository.findAll()
+        String currentUser = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+        return paymentRepository.findAllByUsername(currentUser)
                 .stream().map(paymentMapper::toDto)
                 .collect(Collectors.toList());
     }
