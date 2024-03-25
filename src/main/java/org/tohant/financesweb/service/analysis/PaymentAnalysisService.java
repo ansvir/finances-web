@@ -1,26 +1,25 @@
 package org.tohant.financesweb.service.analysis;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.tohant.financesweb.service.database.PaymentService;
 import org.tohant.financesweb.service.model.PaymentDto;
 import org.tohant.financesweb.service.model.PaymentMonthDto;
+import org.tohant.financesweb.service.model.PaymentPeriodDto;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class PaymentAnalysisService {
-
-    private final PaymentService paymentService;
 
     public List<PaymentMonthDto> getPaymentsByMonths(List<PaymentDto> payments) {
         Map<YearMonth, BigDecimal> paymentsByMonths = payments.stream()
@@ -57,6 +56,18 @@ public class PaymentAnalysisService {
             previousTotal = totalExpenses;
         }
         return paymentsByMonthsDtos;
+    }
+
+    public List<PaymentPeriodDto> getPaymentsByPeriod(List<PaymentDto> payments, LocalDate from, LocalDate to) {
+        return payments.stream()
+                .filter(payment -> {
+                    LocalDate date = LocalDateTime.parse(payment.getDateTime()).toLocalDate();
+                    return date.isAfter(from) && date.isBefore(to);
+                })
+                .collect(Collectors.groupingBy(payment -> LocalDateTime.parse(payment.getDateTime()).toLocalDate(),
+                        Collectors.mapping(PaymentDto::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))))
+                .entrySet().stream().map((entry) -> new PaymentPeriodDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
 }

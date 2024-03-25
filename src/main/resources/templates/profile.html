@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Finances - Home</title>
+    <title>Финансы</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -20,7 +20,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.13.0/Sortable.min.css">
 
     <!-- Libraries Stylesheet -->
     <link th:href="@{/public/lib/animate/animate.min.css}" rel="stylesheet">
@@ -44,11 +43,10 @@
     </div>
     <!-- Spinner End -->
 
-
     <!-- Navbar Start -->
     <div class="container-fluid nav-bar bg-transparent">
         <nav class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4">
-            <a href="index.html" class="navbar-brand d-flex align-items-center text-center">
+            <a th:href="@{/home}" class="navbar-brand d-flex align-items-center text-center">
                 <div class="icon p-2 me-2">
                     <img class="img-fluid" th:src="@{/public/img/icon-deal.png}" alt="Icon"
                          style="width: 30px; height: 30px;">
@@ -77,27 +75,24 @@
             <div class="container">
                 <div class="row g-2">
                     <form th:action="@{/profile/category/rearrange}" method="post">
+                        <input type="hidden" name="priorities"/>
                         <div class="col-md-12">
                             <h2>Мои приоритеты</h2>
                             <div class="row g-2">
-                                <div class="col-md-6">
+                                <div class="col-md-8">
                                     <ul id="sortable-list" class="list-group">
                                         <li th:each="category : ${categories}" class="list-group-item"
-                                            th:text="${category.priority} + ' ' + ${category.name}"
+                                            th:text="${category.name}"
                                             th:data-id="${category.id}"></li>
-                                        <li class="list-group-item" data-id="1">Долг</li>
-                                        <li class="list-group-item" data-id="2">Другое</li>
-                                        <li class="list-group-item" data-id="3">Квартплата</li>
-                                        <li class="list-group-item" data-id="4">Развлечения</li>
-                                        <li class="list-group-item" data-id="5">Связь</li>
-                                        <input type="hidden" name="ids"/>
                                     </ul>
                                 </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-2">
-                                    <button type="submit"
-                                            class="form-control border-0 py-3">Подтвердить</button>
+                                <div class="col-md-4">
+                                    <button id="submitPriorities" type="submit"
+                                            class="btn btn-dark w-100 border-0 py-3 mb-2">Подтвердить
+                                    </button>
+                                    <button id="resetPriorities" type="button"
+                                            class="form-control border-0 py-3">Сбросить
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -130,23 +125,26 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.13.0/Sortable.min.js"></script>
+<script src="http://SortableJS.github.io/Sortable/Sortable.js"></script>
 <script th:src="@{/public/lib/wow/wow.min.js}"></script>
 <script th:src="@{/public/lib/easing/easing.min.js}"></script>
 <script th:src="@{/public/lib/waypoints/waypoints.min.js}"></script>
 <script th:src="@{/public/lib/owlcarousel/owl.carousel.min.js}"></script>
 <script th:src="@{/public/lib/custom.js}"></script>
 <script type="application/javascript">
-    $(document).ready(function() {
-        var sortableList = $('#sortable-list');
-        new Sortable(sortableList, {
-            animation: 150
+    $(document).ready(function () {
+        var list = document.getElementById('sortable-list');
+        var sortable = Sortable.create(list, {
+            onUpdate: function (evt) {
+                console.log(sortable.toArray())
+                $('input[name="priorities"]').val(sortable.toArray());
+            },
+            animation: 150,
         });
-        $('#sortable-list').sortable({
-            update: function(event, ui) {
-                var ids = $(this).sortable('toArray', { attribute: 'data-id' });
-                $('input[name="ids"]').val(ids);
-            }
+        var initialList = sortable.toArray();
+
+        $('#resetPriorities').on('click', function (e) {
+            sortable.sort(initialList);
         });
     });
 </script>

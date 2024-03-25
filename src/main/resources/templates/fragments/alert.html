@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <title>Финансы</title>
+    <link th:href="@{/public/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<body>
+<div th:fragment="alert (type, message)" th:assert="${!#strings.isEmpty(type) and !#strings.isEmpty(message)}" class="alert alert-dismissable" th:classappend="'alert-' + ${type}">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <span th:text="${message}">Текст.</span>
+</div>
+</body>
+</html>

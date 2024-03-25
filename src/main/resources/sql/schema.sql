@@ -1,3 +1,14 @@
+DROP TABLE IF EXISTS authorities CASCADE;
+DROP TABLE IF EXISTS group_authorities CASCADE;
+DROP TABLE IF EXISTS group_members CASCADE;
+DROP TABLE IF EXISTS groups CASCADE;
+DROP TABLE IF EXISTS persistent_logins CASCADE;
+DROP TABLE IF EXISTS payment CASCADE;
+DROP TABLE IF EXISTS profile_categories CASCADE;
+DROP TABLE IF EXISTS category CASCADE;
+DROP TABLE IF EXISTS profile CASCADE;
+DROP TABLE IF EXISTS app_user CASCADE;
+
 CREATE TABLE IF NOT EXISTS app_user
 (
     username VARCHAR(255) PRIMARY KEY,
@@ -82,16 +93,3 @@ create table IF NOT EXISTS public.profile_categories
         constraint fkism980315ek9url6hu9abpf11
             references public.category
 );
-
-CREATE PROCEDURE check_users_exist()
-AS
-$$
-BEGIN
-    usr_count := (SELECT count() FROM app_user);
-    CASE WHEN (usr_count > 0) THEN
-        RAISE EXCEPTION 'Users already exist in the database.';
-    END
-END;
-$$;
-
-COMMIT;
