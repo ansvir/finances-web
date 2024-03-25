@@ -11,10 +11,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -55,7 +52,7 @@ public class PaymentAnalysisService {
 
             previousTotal = totalExpenses;
         }
-        return paymentsByMonthsDtos;
+        return sortDescendingByDate(paymentsByMonthsDtos);
     }
 
     public List<PaymentPeriodDto> getPaymentsByPeriod(List<PaymentDto> payments, LocalDate from, LocalDate to) {
@@ -67,6 +64,13 @@ public class PaymentAnalysisService {
                 .collect(Collectors.groupingBy(payment -> LocalDateTime.parse(payment.getDateTime()).toLocalDate(),
                         Collectors.mapping(PaymentDto::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))))
                 .entrySet().stream().map((entry) -> new PaymentPeriodDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    private List<PaymentMonthDto> sortDescendingByDate(List<PaymentMonthDto> payments) {
+        return payments.stream().sorted((payment1, payment2) -> payment1.getDate().isBefore(payment2.getDate())
+                        ? 1 : payment1.getDate().isEqual(payment2.getDate())
+                        ? 0 : -1)
                 .collect(Collectors.toList());
     }
 

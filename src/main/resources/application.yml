@@ -24,6 +24,11 @@ spring:
   profiles: dev
   datasource:
     data: classpath:sql/test-data.sql
+  thymeleaf:
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    prefix: file:src/main/resources/templates/
 ---
 spring:
   profiles: prod
