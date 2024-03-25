@@ -1,11 +1,8 @@
 spring:
   profiles:
-    active: dev
+    active: prod
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: root
-    url: jdbc:postgresql://localhost:5432/finances
     initialization-mode: always
     schema: classpath:sql/schema.sql
   jpa:
@@ -23,7 +20,10 @@ spring:
 spring:
   profiles: dev
   datasource:
+    username: postgres
+    password: root
     data: classpath:sql/test-data.sql
+    url: jdbc:postgresql://localhost:5432/finances
   thymeleaf:
     cache: false
     mode: HTML
@@ -34,3 +34,5 @@ spring:
   profiles: prod
   datasource:
     data: classpath:sql/data.sql
+    url: postgres://u9vdiri9d3vc1:pb8a58f6fbcecc93f715ff93c74236cae0e481f7909e24fcc2377b8a08276d7a9@ceu9lmqblp8t3q.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d9ebum9hpth6ei
+
