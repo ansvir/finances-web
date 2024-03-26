@@ -60,12 +60,22 @@
                                 <div class="col-md-8">
                                     <ul id="sortable-list" class="list-group">
                                         <li th:each="category : ${categories}" class="list-group-item py-3"
-                                            th:text="${category.name}"
-                                            th:data-id="${category.id}"></li>
+                                            th:data-id="${category.id}">
+                                            <div class="d-flex justify-content-between">
+                                                <span th:text="${category.name}"></span>
+                                                <a th:data-category-id="${category.id}" onclick="setDeletedCategoryId(this.getAttribute('data-category-id'))"
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#reassign-modal" class="align-self-end">
+                                                    <img class="img-fluid" alt="Иконка удаления элемента"
+                                                         th:src="@{/public/img/delete.svg}"/>
+                                                </a>
+                                            </div>
+                                        </li>
                                     </ul>
                                 </div>
                                 <div class="col-md-4">
-                                    <button id="addPriority" type="button" data-bs-toggle="modal" data-bs-target="#default-modal"
+                                    <button id="addPriority" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#default-modal"
                                             class="btn btn-dark w-100 border-0 py-4">Добавить
                                     </button>
                                     <button id="submitPriorities" type="submit"
@@ -84,7 +94,56 @@
         <!-- Search End -->
 
     </div>
-    <div th:replace="fragments/default-modal.html :: default-modal(title='Добавить категорию', field='', defValue='Новая категория', onSubmitUrl='profile/category/add')"></div>
+
+    <div th:replace="fragments/default-modal.html :: default-modal(modalId='default-modal', title='Добавить категорию', defValue='Новая категория', onSubmitUrl='profile/category/add')"></div>
+
+    <div id="edit-modal" class="modal fade" tabindex="-1">
+        <form th:action="@{/profile/category/edit}" th:method="put">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Изменить категорию</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" class="form-control" id="default-modal-input" th:name="'default-modal-input'">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary">Подтвердить</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="reassign-modal" class="modal fade" tabindex="-1">
+        <form th:action="@{/profile/category/transfer}" th:method="put">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Переназначение категории</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="my-2">Выберите категорию, на которую будут переназначены существующие
+                            платежи
+                        </div>
+                        <select th:name="rearrangedId" class="form-select border-0 py-3 mb-2">
+                            <option th:data-category-id="${category.id}" th:selected="${category.priority == 1}"
+                                    th:value="${category.id}" th:each="category : ${categories}" th:text="${category.name}"></option>
+                        </select>
+                        <input id="inputForDeletedCategoryId" th:name="deletedId" type="hidden"/>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary">Подтвердить</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
     <!-- Footer Start -->
     <footer th:insert="fragments/footer.html :: footer"></footer>
 
@@ -108,7 +167,9 @@
 <script th:src="@{/public/lib/owlcarousel/owl.carousel.min.js}"></script>
 <script th:src="@{/public/lib/custom.js}"></script>
 <script type="application/javascript">
+    var previousRearrangeId
     $(document).ready(function () {
+        previousRearrangeId = $('select[name="rearrangedId"]').html()
         var list = document.getElementById('sortable-list');
         var sortable = Sortable.create(list, {
             onUpdate: function (evt) {
@@ -124,9 +185,30 @@
         });
 
         document.getElementById('default-modal').addEventListener('shown.bs.modal', function () {
-            document.getElementById('default-modal-input').focus()
+            var input = document.getElementById('default-modal-input')
+            if (input !== undefined) {
+                input.focus()
+            }
         })
+
+        document.getElementById('reassign-modal').addEventListener('hide.bs.modal', function () {
+            resetCategoriesList()
+        })
+
     });
+
+    function setDeletedCategoryId(id) {
+        $('#inputForDeletedCategoryId').val(id)
+        var rearrangeId = $('select[name="rearrangedId"]')
+        rearrangeId.find('option').filter(function() {
+            return $(this).attr('data-category-id') === id;
+        }).remove()
+    }
+
+    function resetCategoriesList() {
+        $('select[name="rearrangedId"]').html(previousRearrangeId)
+    }
+
 </script>
 </body>
 

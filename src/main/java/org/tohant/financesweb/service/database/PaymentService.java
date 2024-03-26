@@ -9,6 +9,7 @@ import org.tohant.financesweb.mapper.CategoryMapper;
 import org.tohant.financesweb.mapper.PaymentMapper;
 import org.tohant.financesweb.repository.db.CategoryRepository;
 import org.tohant.financesweb.repository.db.PaymentRepository;
+import org.tohant.financesweb.repository.db.ProfileRepository;
 import org.tohant.financesweb.repository.db.UserRepository;
 import org.tohant.financesweb.repository.entity.Category;
 import org.tohant.financesweb.repository.entity.Payment;

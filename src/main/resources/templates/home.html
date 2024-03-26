@@ -58,7 +58,7 @@
                             <div class="row g-2">
                                 <div class="col-md-2">
                                     <select th:name="category.id" class="form-select border-0 py-3">
-                                        <option th:selected="${categories.get(0).id}" th:value="${category.id}"
+                                        <option th:selected="${category.priority == 1}" th:value="${category.id}"
                                                 th:each="category : ${categories}" th:text="${category.name}"></option>
                                     </select>
                                 </div>
