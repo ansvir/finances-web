@@ -2,15 +2,14 @@ package org.tohant.financesweb.service.analysis;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.tohant.financesweb.service.model.PaymentDto;
-import org.tohant.financesweb.service.model.PaymentMonthDto;
-import org.tohant.financesweb.service.model.PaymentPeriodDto;
+import org.tohant.financesweb.service.model.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,6 +64,54 @@ public class PaymentAnalysisService {
                         Collectors.mapping(PaymentDto::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))))
                 .entrySet().stream().map((entry) -> new PaymentPeriodDto(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+    }
+
+    public SummaryStatDto getSummaryStats(List<PaymentDto> payments) {
+        BigDecimal totalExpenses = BigDecimal.ZERO;
+        Map<CategoryDto, BigDecimal> categoryExpenses = new HashMap<>();
+        Map<YearMonth, BigDecimal> monthlyExpenses = new HashMap<>();
+        SummaryStatDto summary = new SummaryStatDto();
+
+        YearMonth mostExpensiveMonth = null;
+        BigDecimal maxMonthlyExpense = BigDecimal.ZERO;
+        CategoryDto mostExpensiveCategory = null;
+        BigDecimal maxCategoryExpense = BigDecimal.ZERO;
+
+        for (PaymentDto payment : payments) {
+            BigDecimal amount = payment.getAmount();
+            totalExpenses = totalExpenses.add(amount);
+
+            CategoryDto category = payment.getCategory();
+            BigDecimal categoryTotal = categoryExpenses.getOrDefault(category, BigDecimal.ZERO);
+            categoryExpenses.put(category, categoryTotal.add(amount));
+
+            LocalDate date = LocalDate.parse(payment.getDateTime(), PaymentDto.DATE_TIME_FORMATTER);
+            YearMonth yearMonth = YearMonth.from(date);
+            BigDecimal monthlyTotal = monthlyExpenses.getOrDefault(yearMonth, BigDecimal.ZERO);
+            monthlyExpenses.put(yearMonth, monthlyTotal.add(amount));
+
+            if (monthlyTotal.compareTo(maxMonthlyExpense) > 0) {
+                maxMonthlyExpense = monthlyTotal;
+                mostExpensiveMonth = yearMonth;
+            }
+
+            if (categoryTotal.compareTo(maxCategoryExpense) > 0) {
+                maxCategoryExpense = categoryTotal;
+                mostExpensiveCategory = category;
+            }
+        }
+        if (mostExpensiveMonth == null) {
+            summary.setDateYear(null);
+        } else {
+            summary.setDateYear(mostExpensiveMonth);
+        }
+        if (mostExpensiveCategory == null) {
+            summary.setCategoryName("Нет данных");
+        } else {
+            summary.setCategoryName(mostExpensiveCategory.getName());
+        }
+        summary.setAllExpenses(totalExpenses);
+        return summary;
     }
 
     private List<PaymentMonthDto> sortDescendingByDate(List<PaymentMonthDto> payments) {

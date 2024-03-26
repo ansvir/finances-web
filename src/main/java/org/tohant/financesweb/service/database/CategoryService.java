@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tohant.financesweb.mapper.CategoryMapper;
 import org.tohant.financesweb.repository.db.CategoryRepository;
+import org.tohant.financesweb.repository.db.PaymentRepository;
 import org.tohant.financesweb.repository.db.ProfileRepository;
+import org.tohant.financesweb.repository.db.UserRepository;
 import org.tohant.financesweb.repository.entity.Category;
+import org.tohant.financesweb.repository.entity.Profile;
 import org.tohant.financesweb.service.IService;
 import org.tohant.financesweb.service.model.CategoryDto;
 
@@ -26,6 +29,7 @@ public class CategoryService implements IService<CategoryDto, Long> {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<CategoryDto> findAll() {

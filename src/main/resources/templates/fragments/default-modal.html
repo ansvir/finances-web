@@ -5,7 +5,7 @@
     <title>Финансы - Модальное окно</title>
 </head>
 <body>
-<div th:fragment="default-modal (title, field, defValue, onSubmitUrl)" id="default-modal" class="modal fade" tabindex="-1">
+<div th:fragment="default-modal (modalId, title, defValue, onSubmitUrl)" th:id="${modalId}" class="modal fade" tabindex="-1">
     <form th:action="@{/__${onSubmitUrl}__}" method="post">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -14,11 +14,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
                 <div class="modal-body">
-                    <div>
-                        <label for="default-modal-input">
-                            <span th:text="${field}">Наименование</span>
-                        </label>
-                    </div>
                     <div>
                         <input type="text" class="form-control" id="default-modal-input" th:name="'default-modal-input'" th:placeholder="${defValue}">
                     </div>
