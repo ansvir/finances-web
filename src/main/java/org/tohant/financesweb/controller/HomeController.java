@@ -49,6 +49,7 @@ public class HomeController {
         model.addAttribute("payments", payments);
         model.addAttribute("paymentsByMonth", paymentAnalysisService.getPaymentsByMonths(payments));
         model.addAttribute("categories", userService.findByUsername(currentUser).getCategories());
+        model.addAttribute("summaryStat", paymentAnalysisService.getSummaryStats(payments));
         List<LocalDate> extremumDates = extractExtremumDates(payments);
         if (periodDto.getPrioritiesDateFrom() == null
                 || periodDto.getPrioritiesDateTo() == null) {

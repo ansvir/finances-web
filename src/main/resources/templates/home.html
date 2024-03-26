@@ -172,6 +172,33 @@
                         </div>
                     </div>
                 </div>
+                <div class="rounded-3 bg-white p-4">
+                    <h2 class="h2">Итоги затрат</h2>
+                    <div class="row gap-2 justify-content-center">
+                        <div class="card col-md-3">
+                            <div class="card-body">
+                                <div class="my-1">Наиболее затратный месяц и год</div>
+                                <h2 class="h2" th:text="${summaryStat.dateYear == null ? 'Нет данных' : summaryStat.dateYear.monthValue + ' м. ' + summaryStat.dateYear.year + ' г.'}">
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="card col-md-3">
+                            <div class="card-body">
+                                <div class="my-1">Наиболее затратная категория</div>
+                                <h2 class="h2" th:text="${summaryStat.categoryName}">
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="card col-md-3">
+                            <div class="card-body">
+                                <div class="my-1">Все затраты составили</div>
+                                <h2 class="h2" th:text="${summaryStat.allExpenses}">
+                                </h2>
+                                BYN
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
