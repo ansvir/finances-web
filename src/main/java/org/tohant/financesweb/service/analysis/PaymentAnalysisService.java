@@ -58,7 +58,8 @@ public class PaymentAnalysisService {
         return payments.stream()
                 .filter(payment -> {
                     LocalDate date = LocalDateTime.parse(payment.getDateTime()).toLocalDate();
-                    return date.isAfter(from) && date.isBefore(to);
+                    return date.isAfter(from) && date.isBefore(to)
+                            || date.isEqual(from) || date.isEqual(to);
                 })
                 .collect(Collectors.groupingBy(payment -> LocalDateTime.parse(payment.getDateTime()).toLocalDate(),
                         Collectors.mapping(PaymentDto::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))))
@@ -77,34 +78,39 @@ public class PaymentAnalysisService {
         CategoryDto mostExpensiveCategory = null;
         BigDecimal maxCategoryExpense = BigDecimal.ZERO;
 
-        for (PaymentDto payment : payments) {
-            BigDecimal amount = payment.getAmount();
-            totalExpenses = totalExpenses.add(amount);
-
-            CategoryDto category = payment.getCategory();
-            BigDecimal categoryTotal = categoryExpenses.getOrDefault(category, BigDecimal.ZERO);
-            categoryExpenses.put(category, categoryTotal.add(amount));
-
-            LocalDate date = LocalDate.parse(payment.getDateTime(), PaymentDto.DATE_TIME_FORMATTER);
-            YearMonth yearMonth = YearMonth.from(date);
-            BigDecimal monthlyTotal = monthlyExpenses.getOrDefault(yearMonth, BigDecimal.ZERO);
-            monthlyExpenses.put(yearMonth, monthlyTotal.add(amount));
-
-            if (monthlyTotal.compareTo(maxMonthlyExpense) > 0) {
-                maxMonthlyExpense = monthlyTotal;
-                mostExpensiveMonth = yearMonth;
-            }
-
-            if (categoryTotal.compareTo(maxCategoryExpense) > 0) {
-                maxCategoryExpense = categoryTotal;
-                mostExpensiveCategory = category;
-            }
-        }
-        if (mostExpensiveMonth == null) {
-            summary.setDateYear(null);
+        if (payments.size() == 1) {
+            PaymentDto payment = payments.get(0);
+            LocalDate dateTime = LocalDate.parse(payment.getDateTime(), PaymentDto.DATE_TIME_FORMATTER);
+            mostExpensiveMonth = YearMonth.from(dateTime);
+            mostExpensiveCategory = payment.getCategory();
+            totalExpenses = payment.getAmount();
         } else {
-            summary.setDateYear(mostExpensiveMonth);
+            for (PaymentDto payment : payments) {
+                BigDecimal amount = payment.getAmount();
+                totalExpenses = totalExpenses.add(amount);
+
+                CategoryDto category = payment.getCategory();
+                BigDecimal categoryTotal = categoryExpenses.getOrDefault(category, BigDecimal.ZERO);
+                categoryExpenses.put(category, categoryTotal.add(amount));
+
+                LocalDate date = LocalDate.parse(payment.getDateTime(), PaymentDto.DATE_TIME_FORMATTER);
+                YearMonth yearMonth = YearMonth.from(date);
+                BigDecimal monthlyTotal = monthlyExpenses.getOrDefault(yearMonth, BigDecimal.ZERO);
+                monthlyExpenses.put(yearMonth, monthlyTotal.add(amount));
+
+                if (monthlyTotal.compareTo(maxMonthlyExpense) > 0) {
+                    maxMonthlyExpense = monthlyTotal;
+                    mostExpensiveMonth = yearMonth;
+                }
+
+                if (categoryTotal.compareTo(maxCategoryExpense) > 0) {
+                    maxCategoryExpense = categoryTotal;
+                    mostExpensiveCategory = category;
+                }
+
+            }
         }
+        summary.setDateYear(mostExpensiveMonth);
         if (mostExpensiveCategory == null) {
             summary.setCategoryName("Нет данных");
         } else {

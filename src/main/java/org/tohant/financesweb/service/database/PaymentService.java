@@ -79,8 +79,11 @@ public class PaymentService implements IService<PaymentDto, Long> {
                 .orElseThrow(() -> new EntityNotFoundException("No user found for username: " + currentUser));
         List<Payment> payments = paymentRepository.findAllByUsername(currentUser);
         Map<CategoryDto, BigDecimal> paymentsByPeriod = payments.stream()
-                .filter(payment -> payment.getDateTime().toLocalDate().isAfter(from)
-                        && payment.getDateTime().toLocalDate().isBefore(to))
+                .filter(payment -> {
+                    LocalDate date = payment.getDateTime().toLocalDate();
+                    return date.isAfter(from) && date.isBefore(to)
+                            || date.isEqual(from) || date.isEqual(to);
+                })
                 .collect(Collectors.groupingBy(payment -> categoryMapper.toDto(payment.getCategory()),
                         Collectors.mapping(Payment::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))));
         return categories.stream()
