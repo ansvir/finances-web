@@ -79,7 +79,13 @@
                 </div>
                 <div class="row my-4">
                     <div class="rounded-3 bg-white p-4">
-                        <h2>Все платежи</h2>
+                        <h2>Все платежи
+                            <span>
+                                <a data-toggle="tooltip" data-placement="right" title="Показывает список платежей за всё время.">
+                                    <img alt="Кнопка 'Подробнее'" th:src="@{/public/img/info.svg}"/>
+                                </a>
+                            </span>
+                        </h2>
                         <table id="paymentsTable" class="table table-bordered table-dark">
                             <thead>
                             <tr>
@@ -102,7 +108,14 @@
                 </div>
                 <div class="row py-4">
                     <div class="rounded-3 bg-white p-4">
-                        <h2>Сравнительный анализ затрат за всё время</h2>
+                        <h2>
+                            Сравнительный анализ затрат за всё время
+                            <span>
+                                <a data-toggle="tooltip" data-placement="right" title="Показывает затраты (%) по сравнению с предыдущим месяцем.">
+                                    <img alt="Кнопка 'Подробнее'" th:src="@{/public/img/info.svg}"/>
+                                </a>
+                            </span>
+                        </h2>
                         <table id="paymentsAnalysisTable" class="table table-bordered table-dark">
                             <thead>
                             <tr>
@@ -134,7 +147,14 @@
                 </div>
                 <div class="row py-4">
                     <div class="rounded-3 bg-white p-4">
-                        <h2>Сравнительный анализ затрат по периоду</h2>
+                        <h2>
+                            Сравнительный анализ затрат по периоду
+                            <span>
+                                <a data-toggle="tooltip" data-placement="right" title="Показывает диаграммы затрат по выбранному периоду. Кругова диаграмма показывает общее количество затрат по категориям, вторая - динамику изменений затрат во времени.">
+                                    <img alt="Кнопка 'Подробнее'" th:src="@{/public/img/info.svg}"/>
+                                </a>
+                            </span>
+                        </h2>
                         <form class="form-floating" th:action="@{/home}" method="POST">
                             <div class="col-md-12 py-2">
                                 <div class="row g-2">
@@ -172,29 +192,41 @@
                         </div>
                     </div>
                 </div>
-                <div class="rounded-3 bg-white p-4">
-                    <h2 class="h2">Итоги затрат</h2>
-                    <div class="row gap-2 justify-content-center">
-                        <div class="card col-md-3">
-                            <div class="card-body">
-                                <div class="my-1">Наиболее затратный месяц и год</div>
-                                <h2 class="h2" th:text="${summaryStat.dateYear == null ? 'Нет данных' : summaryStat.dateYear.monthValue + ' м. ' + summaryStat.dateYear.year + ' г.'}">
-                                </h2>
-                            </div>
-                        </div>
-                        <div class="card col-md-3">
-                            <div class="card-body">
-                                <div class="my-1">Наиболее затратная категория</div>
-                                <h2 class="h2" th:text="${summaryStat.categoryName}">
-                                </h2>
-                            </div>
-                        </div>
-                        <div class="card col-md-3">
-                            <div class="card-body">
-                                <div class="my-1">Все затраты составили</div>
-                                <h2 class="h2" th:text="${summaryStat.allExpenses}">
-                                </h2>
-                                BYN
+                <div class="row py-4">
+                    <div class="rounded-3 bg-white p-4">
+                        <h2 class="h2">
+                            Итоги затрат
+                            <span>
+                                <a data-toggle="tooltip" data-placement="right" title="Итоговые показатели затрат.">
+                                    <img alt="Кнопка 'Подробнее'" th:src="@{/public/img/info.svg}"/>
+                                </a>
+                            </span>
+                        </h2>
+                        <div class="col-md-12 py-2">
+                            <div class="d-flex gap-2 justify-content-between">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="my-1">Наиболее затратный месяц и год</div>
+                                        <h2 class="h2"
+                                            th:text="${summaryStat.dateYear == null ? 'Нет данных' : summaryStat.dateYear.monthValue + ' м. ' + summaryStat.dateYear.year + ' г.'}">
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="my-1">Наиболее затратная категория</div>
+                                        <h2 class="h2" th:text="${summaryStat.categoryName}">
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="my-1">Все затраты составили</div>
+                                        <h2 class="h2" th:text="${summaryStat.allExpenses}">
+                                        </h2>
+                                        BYN
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -224,6 +256,7 @@
 <script th:src="@{/public/lib/custom.js}"></script>
 <script th:inline="javascript" type="application/javascript">
     $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip()
         $('#paymentsTable').dataTable({
             language: {
                 search: '<span class="link-dark">Поиск</span>',
@@ -301,7 +334,7 @@
                 label: 'Затраты, BYN',
                 data: allPaymentsByPeriod.map(payment => payment.amount),
                 fill: false,
-                borderColor: 'rgb(75, 192, 192)',
+                borderColor: '#00B98E',
                 tension: 0.1
             }]
         },

@@ -51,43 +51,48 @@
         <!-- Search Start -->
         <div class="container-fluid bg-primary mb-5 wow fadeIn" data-wow-delay="0.1s" style="padding: 35px;">
             <div class="container">
-                <div class="row g-2">
-                    <form th:action="@{/profile/category/rearrange}" method="post">
-                        <input type="hidden" name="priorities"/>
-                        <div class="col-md-12">
-                            <h2>Мои приоритеты</h2>
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <ul id="sortable-list" class="list-group">
-                                        <li th:each="category : ${categories}" class="list-group-item py-3"
-                                            th:data-id="${category.id}">
-                                            <div class="d-flex justify-content-between">
-                                                <span th:text="${category.name}"></span>
-                                                <a th:data-category-id="${category.id}" onclick="setDeletedCategoryId(this.getAttribute('data-category-id'))"
-                                                   data-bs-toggle="modal"
-                                                   data-bs-target="#reassign-modal" class="align-self-end">
-                                                    <img class="img-fluid" alt="Иконка удаления элемента"
-                                                         th:src="@{/public/img/delete.svg}"/>
-                                                </a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-4">
-                                    <button id="addPriority" type="button" data-bs-toggle="modal"
-                                            data-bs-target="#default-modal"
-                                            class="btn btn-dark w-100 border-0 py-4">Добавить
-                                    </button>
-                                    <button id="submitPriorities" type="submit"
-                                            class="btn btn-dark w-100 border-0 py-4 my-2">Подтвердить
-                                    </button>
-                                    <button id="resetPriorities" type="button"
-                                            class="form-control border-0 py-5">Сбросить
-                                    </button>
+                <div class="row py-4">
+                    <div class="rounded-3 bg-white p-4">
+                        <form th:action="@{/profile/category/rearrange}" method="post">
+                            <input type="hidden" name="priorities"/>
+                            <div class="col-md-12 py-2">
+                                <h2>Мои приоритеты</h2>
+                                <div class="row g-2">
+                                    <div class="col-md-8">
+                                        <ul id="sortable-list" class="list-group">
+                                            <li th:each="category : ${categories}"
+                                                class="list-group-item bg-primary text-white py-3"
+                                                th:data-id="${category.id}">
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="fw-bold" th:text="${category.name}"></span>
+                                                    <a th:data-category-id="${category.id}"
+                                                       onclick="setDeletedCategoryId(this.getAttribute('data-category-id'))"
+                                                       data-bs-toggle="modal"
+                                                       data-bs-target="#reassign-modal" class="align-self-end">
+                                                        <img style="cursor: pointer" class="img-fluid"
+                                                             alt="Иконка удаления элемента"
+                                                             th:src="@{/public/img/delete.svg}"/>
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button id="addPriority" type="button" data-bs-toggle="modal"
+                                                data-bs-target="#default-modal"
+                                                class="btn btn-dark w-100 border-0 py-4">Добавить
+                                        </button>
+                                        <button id="submitPriorities" type="submit"
+                                                class="btn btn-dark w-100 border-0 py-4 my-2">Подтвердить
+                                        </button>
+                                        <button id="resetPriorities" type="button"
+                                                class="form-control border-0 py-5">Сбросить
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -106,7 +111,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                     </div>
                     <div class="modal-body">
-                        <input type="text" class="form-control" id="default-modal-input" th:name="'default-modal-input'">
+                        <input type="text" class="form-control" id="default-modal-input"
+                               th:name="'default-modal-input'">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Закрыть</button>
@@ -131,7 +137,8 @@
                         </div>
                         <select th:name="rearrangedId" class="form-select border-0 py-3 mb-2">
                             <option th:data-category-id="${category.id}" th:selected="${category.priority == 1}"
-                                    th:value="${category.id}" th:each="category : ${categories}" th:text="${category.name}"></option>
+                                    th:value="${category.id}" th:each="category : ${categories}"
+                                    th:text="${category.name}"></option>
                         </select>
                         <input id="inputForDeletedCategoryId" th:name="deletedId" type="hidden"/>
 
@@ -200,7 +207,7 @@
     function setDeletedCategoryId(id) {
         $('#inputForDeletedCategoryId').val(id)
         var rearrangeId = $('select[name="rearrangedId"]')
-        rearrangeId.find('option').filter(function() {
+        rearrangeId.find('option').filter(function () {
             return $(this).attr('data-category-id') === id;
         }).remove()
     }
