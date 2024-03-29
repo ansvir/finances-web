@@ -57,7 +57,7 @@
                         <div class="col-md-12">
                             <div class="row g-2">
                                 <div class="col-md-2">
-                                    <select th:name="category.id" class="form-select border-0 py-3">
+                                    <select th:name="categoryId" class="form-select border-0 py-3">
                                         <option th:selected="${category.priority == 1}" th:value="${category.id}"
                                                 th:each="category : ${categories}" th:text="${category.name}"></option>
                                     </select>
@@ -98,8 +98,8 @@
                             <tbody>
                             <tr th:each="payment : ${#lists.sort(payments, #futils.getPaymentDateComparator())}">
                                 <td th:text="${payment.name}"></td>
-                                <td th:text="${payment.amount}"></td>
-                                <td th:text="${payment.category.name}"></td>
+                                <td th:text="${#numbers.formatDecimal(payment.amount, 1, 2)}"></td>
+                                <td th:text="${categoriesMap[payment.categoryId].name}"></td>
                                 <td th:text="${#strings.listJoin(payment.dateTime.split('T'), ' ')}"></td>
                             </tr>
                             </tbody>
@@ -208,7 +208,7 @@
                                     <div class="card-body">
                                         <div class="my-1">Наиболее затратный месяц и год</div>
                                         <h2 class="h2"
-                                            th:text="${summaryStat.dateYear == null ? 'Нет данных' : summaryStat.dateYear.monthValue + ' м. ' + summaryStat.dateYear.year + ' г.'}">
+                                            th:text="${summaryStat.dateYear}">
                                         </h2>
                                     </div>
                                 </div>

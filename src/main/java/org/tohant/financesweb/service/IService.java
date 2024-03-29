@@ -6,7 +6,7 @@ public interface IService<T, ID> {
 
     List<T> findAll();
 
-    void save(T entity);
+    T save(T entity);
 
     void updateAll(List<T> entities);
 

@@ -2,6 +2,7 @@ package org.tohant.financesweb.service.database;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +42,8 @@ public class ProfileService implements IService<ProfileDto, Long> {
     }
 
     @Override
-    public void save(ProfileDto entity) {
-        profileRepository.save(profileMapper.toEntity(entity));
+    public ProfileDto save(ProfileDto entity) {
+        return profileMapper.toDto(profileRepository.save(profileMapper.toEntity(entity)));
     }
 
     @Override
@@ -59,6 +60,7 @@ public class ProfileService implements IService<ProfileDto, Long> {
         return profileRepository.count();
     }
 
+    @CacheEvict("categoriesCache")
     public void deleteCategoryFromProfile(Long reassignedCategoryId, Long deletedCategoryId) {
         String currentUser = SecurityContextHolder.getContext()
                 .getAuthentication().getName();

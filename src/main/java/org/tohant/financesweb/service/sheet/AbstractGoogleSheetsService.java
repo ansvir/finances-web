@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.RoundingMode;
 import java.security.GeneralSecurityException;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -143,7 +142,7 @@ public abstract class AbstractGoogleSheetsService implements SheetService {
         String plainDateTime = String.join(" ", dateTime[0], dateTime[1]);
         return List.of(List.of(paymentDto.getName(),
                 paymentDto.getAmount().setScale(2, RoundingMode.HALF_UP),
-                paymentDto.getCategory().getId(),
+                paymentDto.getCategoryId(), // todo was getCategory().getId()
                 plainDateTime));
     }
 
@@ -278,22 +277,24 @@ public abstract class AbstractGoogleSheetsService implements SheetService {
     }
 
     private static List<PaymentDto> createFailedPayment(String message, int status) {
-        List<PaymentDto> payments = new ArrayList<>();
-        PaymentDto payment = new PaymentDto(null, null,
-                new CategoryDto(String.valueOf(CategoryDto.Type.OTHER.getId()), CategoryDto.Type.OTHER.getName(), null), // todo change priority
-                null);
+//        List<PaymentDto> payments = new ArrayList<>();
+//        PaymentDto payment = new PaymentDto(null, null,
+//                new CategoryDto(String.valueOf(CategoryDto.Type.OTHER.getId()), CategoryDto.Type.OTHER.getName(), null), // todo change priority
+//                null);
 //        payment.setContent(message);
 //        payment.setStatusCode(status);
-        payments.add(payment);
-        return payments;
+//        payments.add(payment);
+//        return payments;
+        return List.of();
     }
 
     private static List<CategoryDto> createFailedCategory(String message, int status) {
-        List<CategoryDto> categories = new ArrayList<>();
-        CategoryDto category = new CategoryDto(String.valueOf(CategoryDto.Type.OTHER.getId()), CategoryDto.Type.OTHER.getName(), null); // todo change priority
+//        List<CategoryDto> categories = new ArrayList<>();
+//        CategoryDto category = new CategoryDto(String.valueOf(CategoryDto.Type.OTHER.getId()), CategoryDto.Type.OTHER.getName(), null); // todo change priority
 //        category.setContent(message);
 //        category.setStatusCode(status);
-        return categories;
+//        return categories;
+        return List.of();
     }
 
     private String getSheetBasedOnUsername() {

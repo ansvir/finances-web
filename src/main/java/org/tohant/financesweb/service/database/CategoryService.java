@@ -2,6 +2,8 @@ package org.tohant.financesweb.service.database;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +31,6 @@ public class CategoryService implements IService<CategoryDto, Long> {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final ProfileRepository profileRepository;
-    private final UserRepository userRepository;
 
     @Override
     public List<CategoryDto> findAll() {
@@ -39,8 +40,8 @@ public class CategoryService implements IService<CategoryDto, Long> {
     }
 
     @Override
-    public void save(CategoryDto categoryDto) {
-        categoryRepository.save(categoryMapper.toEntity(categoryDto));
+    public CategoryDto save(CategoryDto categoryDto) {
+        return categoryMapper.toDto(categoryRepository.save(categoryMapper.toEntity(categoryDto)));
     }
 
     @Override

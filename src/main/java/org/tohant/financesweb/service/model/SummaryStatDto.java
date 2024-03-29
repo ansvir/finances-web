@@ -11,7 +11,7 @@ import java.time.YearMonth;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SummaryStatDto {
-    private YearMonth dateYear;
+    private String dateYear;
     private String categoryName;
     private BigDecimal allExpenses;
 }

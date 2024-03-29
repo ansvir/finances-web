@@ -8,8 +8,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.tohant.financesweb.service.analysis.PaymentAnalysisService;
+import org.tohant.financesweb.service.database.CategoryService;
 import org.tohant.financesweb.service.database.PaymentService;
 import org.tohant.financesweb.service.database.UserService;
+import org.tohant.financesweb.service.model.CategoryDto;
 import org.tohant.financesweb.service.model.PaymentDto;
 import org.tohant.financesweb.service.model.PeriodDto;
 import org.tohant.financesweb.util.FinancesThymeleafUtil;
@@ -18,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -48,8 +51,11 @@ public class HomeController {
         List<PaymentDto> payments = paymentService.findAll();
         model.addAttribute("payments", payments);
         model.addAttribute("paymentsByMonth", paymentAnalysisService.getPaymentsByMonths(payments));
-        model.addAttribute("categories", userService.findByUsername(currentUser).getCategories());
-        model.addAttribute("summaryStat", paymentAnalysisService.getSummaryStats(payments));
+        List<CategoryDto> categories = userService.findByUsername(currentUser).getCategories();
+        model.addAttribute("categories", categories);
+        model.addAttribute("categoriesMap", categories.stream()
+                .collect(Collectors.toMap(CategoryDto::getId, value -> value)));
+        model.addAttribute("summaryStat", paymentAnalysisService.getSummaryStats(payments, categories));
         List<LocalDate> extremumDates = extractExtremumDates(payments);
         if (periodDto.getPrioritiesDateFrom() == null
                 || periodDto.getPrioritiesDateTo() == null) {
