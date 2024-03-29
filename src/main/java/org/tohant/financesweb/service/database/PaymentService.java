@@ -9,14 +9,13 @@ import org.tohant.financesweb.mapper.CategoryMapper;
 import org.tohant.financesweb.mapper.PaymentMapper;
 import org.tohant.financesweb.repository.db.CategoryRepository;
 import org.tohant.financesweb.repository.db.PaymentRepository;
-import org.tohant.financesweb.repository.db.ProfileRepository;
 import org.tohant.financesweb.repository.db.UserRepository;
 import org.tohant.financesweb.repository.entity.Category;
 import org.tohant.financesweb.repository.entity.Payment;
 import org.tohant.financesweb.service.IService;
 import org.tohant.financesweb.service.model.CategoryDto;
-import org.tohant.financesweb.service.model.PaymentDto;
 import org.tohant.financesweb.service.model.PaymentCategoryPeriodDto;
+import org.tohant.financesweb.service.model.PaymentDto;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
@@ -47,11 +46,18 @@ public class PaymentService implements IService<PaymentDto, Long> {
     }
 
     @Override
-    public void save(PaymentDto paymentDto) {
+    public PaymentDto save(PaymentDto paymentDto) {
         String currentUser = SecurityContextHolder.getContext()
                 .getAuthentication().getName();
-        userRepository.findByUsername(currentUser)
-                .map(user -> paymentRepository.save(paymentMapper.toEntity(paymentDto, user)))
+        return userRepository.findByUsername(currentUser)
+                .map(user -> {
+                    CategoryDto categoryDto = categoryMapper.toDto(categoryRepository
+                            .findById(Long.parseLong(paymentDto.getCategoryId()))
+                            .stream()
+                            .filter(category -> category.getId().toString().equals(paymentDto.getCategoryId()))
+                            .findFirst().orElseThrow(() -> new EntityNotFoundException("No such category with id: " + paymentDto.getCategoryId())));
+                    return paymentMapper.toDto(paymentRepository.save(paymentMapper.toEntity(paymentDto, categoryDto, user)));
+                })
                 .orElseThrow(() -> new EntityNotFoundException("No user found for username: " + currentUser));
     }
 
@@ -61,7 +67,14 @@ public class PaymentService implements IService<PaymentDto, Long> {
                 .getAuthentication().getName();
         userRepository.findByUsername(currentUser)
                 .map(user -> paymentRepository.saveAll(entities.stream()
-                        .map(payment -> paymentMapper.toEntity(payment, user))
+                        .map(payment -> {
+                            CategoryDto categoryDto = categoryMapper.toDto(categoryRepository
+                                    .findById(Long.parseLong(payment.getCategoryId()))
+                                    .stream()
+                                    .filter(category -> category.getId().toString().equals(payment.getCategoryId()))
+                                    .findFirst().orElseThrow(() -> new EntityNotFoundException("No such category with id: " + payment.getCategoryId())));
+                            return paymentMapper.toEntity(payment, categoryDto, user);
+                        })
                         .collect(Collectors.toList())))
                 .orElseThrow(() -> new EntityNotFoundException("No user found for username: " + currentUser));
     }

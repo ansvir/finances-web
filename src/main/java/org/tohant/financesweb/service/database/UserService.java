@@ -32,8 +32,8 @@ public class UserService implements IService<UserDto, Long> {
     }
 
     @Override
-    public void save(UserDto user) {
-        userRepository.save(userMapper.toEntity(user));
+    public UserDto save(UserDto user) {
+        return userMapper.toDto(userRepository.save(userMapper.toEntity(user)));
     }
 
     @Override

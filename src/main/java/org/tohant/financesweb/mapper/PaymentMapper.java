@@ -4,18 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.tohant.financesweb.repository.entity.Payment;
 import org.tohant.financesweb.repository.entity.User;
+import org.tohant.financesweb.service.model.CategoryDto;
 import org.tohant.financesweb.service.model.PaymentDto;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static org.tohant.financesweb.service.model.PaymentDto.DATE_TIME_FORMATTER;
 
 @Component
 @RequiredArgsConstructor
 public class PaymentMapper {
-
 
     private final CategoryMapper categoryMapper;
 
@@ -25,16 +24,11 @@ public class PaymentMapper {
                 payment.getDateTime().format(DATE_TIME_FORMATTER));
     }
 
-    public Payment toEntity(PaymentDto paymentDto, User user) {
+    public Payment toEntity(PaymentDto paymentDto, CategoryDto categoryDto, User user) {
         Payment payment = new Payment();
-        paymentDto.getCategory().setPriority(user.getProfile().getCategories()
-                .stream()
-                .filter(category -> category.getId().toString().equals(paymentDto.getCategory().getId()))
-                .findFirst().orElseThrow(() -> new EntityNotFoundException("No such category with id: " + paymentDto.getCategory().getId()))
-                .getPriority().toString());
         payment.setName(paymentDto.getName());
         payment.setAmount(paymentDto.getAmount());
-        payment.setCategory(categoryMapper.toEntity(paymentDto.getCategory()));
+        payment.setCategory(categoryMapper.toEntity(categoryDto));
         payment.setDateTime(LocalDateTime.now());
         payment.setUser(user);
         return payment;
