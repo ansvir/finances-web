@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.tohant.financesweb.service.analysis.PaymentAnalysisService;
@@ -16,6 +17,7 @@ import org.tohant.financesweb.service.model.PaymentDto;
 import org.tohant.financesweb.service.model.PeriodDto;
 import org.tohant.financesweb.util.FinancesThymeleafUtil;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,14 +35,17 @@ public class HomeController {
     private final PaymentService paymentService;
     private final PaymentAnalysisService paymentAnalysisService;
 
-    @RequestMapping(value = "/home", method = { RequestMethod.GET, RequestMethod.POST })
-    public ModelAndView getMainPage(PeriodDto periodDto, Model model) {
+    @GetMapping(value = "/" + HOME_PAGE_NAME)
+    public ModelAndView getMainPage(PeriodDto periodDto, Model model, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return FinancesThymeleafUtil.buildMav(HOME_PAGE_NAME, model);
+        }
         populateModel(periodDto, model);
         return FinancesThymeleafUtil.buildMav(HOME_PAGE_NAME, model);
     }
 
-    @PostMapping(value = "/payment")
-    public ModelAndView addPayment(PeriodDto periodDto, PaymentDto payment, Model model) {
+    @PostMapping(value = "/" + HOME_PAGE_NAME)
+    public ModelAndView addPayment(PeriodDto periodDto, @Valid PaymentDto payment, Model model) {
         paymentService.save(payment);
         populateModel(periodDto, model);
         return FinancesThymeleafUtil.buildMav(HOME_PAGE_NAME, model);

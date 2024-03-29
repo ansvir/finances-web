@@ -53,7 +53,7 @@
             <div class="container">
                 <div class="row py-4">
                     <div class="rounded-3 bg-white p-4">
-                        <form th:action="@{/profile/category/rearrange}" method="post">
+                        <form th:action="@{/profile}" th:method="put">
                             <input type="hidden" name="priorities"/>
                             <div class="col-md-12 py-2">
                                 <h2>Мои приоритеты</h2>
@@ -100,7 +100,7 @@
 
     </div>
 
-    <div th:replace="fragments/default-modal.html :: default-modal(modalId='default-modal', title='Добавить категорию', defValue='Новая категория', onSubmitUrl='profile/category/add')"></div>
+    <div th:replace="fragments/default-modal.html :: default-modal(modalId='default-modal', title='Добавить категорию', defValue='Новая категория', onSubmitUrl='profile')"></div>
 
     <div id="edit-modal" class="modal fade" tabindex="-1">
         <form th:action="@{/profile/category/edit}" th:method="put">
@@ -124,7 +124,7 @@
     </div>
 
     <div id="reassign-modal" class="modal fade" tabindex="-1">
-        <form th:action="@{/profile/category/transfer}" th:method="put">
+        <form th:action="@{/profile}" th:method="delete">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">

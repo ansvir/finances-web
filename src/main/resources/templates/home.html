@@ -53,7 +53,7 @@
         <div class="container-fluid bg-primary mb-5 wow fadeIn" data-wow-delay="0.1s" style="padding: 35px;">
             <div class="container">
                 <div class="row g-2">
-                    <form th:action="@{/payment}" method="post">
+                    <form th:action="@{/home}" method="post">
                         <div class="col-md-12">
                             <div class="row g-2">
                                 <div class="col-md-2">
@@ -303,55 +303,70 @@
     document.getElementById('prioritiesDateFrom').valueAsDate = periodFromDate
     document.getElementById('prioritiesDateTo').valueAsDate = periodToDate
     const ctx = document.getElementById('prioritiesPaymentsChart');
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: paymentsByPeriod.map(p => p.category.name),
-            datasets: [{
-                label: 'BYN',
-                data: paymentsByPeriod.map(p => p.amount),
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    display: false
-                },
-                y: {
-                    display: false
-                }
-            }
-        }
-    });
-
-    const ctx2 = document.getElementById('paymentsByPeriodLine');
-    new Chart(ctx2, {
-        type: 'line',
-        data: {
-            labels: allPaymentsByPeriod.map(payment => payment.date),
-            datasets: [{
-                label: 'Затраты, BYN',
-                data: allPaymentsByPeriod.map(payment => payment.amount),
-                fill: false,
-                borderColor: '#00B98E',
-                tension: 0.1
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    display: true
-                },
-                y: {
-                    display: true,
-                    grid: {
+    const noContent = document.createElement("h2");
+    noContent.innerText = "Нет данных";
+    console.log(paymentsByPeriod)
+    if (paymentsByPeriod.filter(payment => payment.amount > 0).length === 0) {
+        ctx.parentNode.replaceChild(noContent, ctx)
+    } else {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: paymentsByPeriod.map(p => p.category.name),
+                datasets: [{
+                    label: 'BYN',
+                    data: paymentsByPeriod.map(p => p.amount),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        display: false
+                    },
+                    y: {
                         display: false
                     }
                 }
             }
-        }
-    });
+        });
+    }
+
+    const ctx2 = document.getElementById('paymentsByPeriodLine');
+    const noContent2 = document.createElement("h2");
+    noContent2.innerHTML = "<h2>Нет данных</h2>";
+
+    console.log(allPaymentsByPeriod)
+    if (allPaymentsByPeriod.length === 0) {
+        ctx2.parentNode.replaceChild(noContent2, ctx2)
+    } else {
+        new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: allPaymentsByPeriod.map(payment => payment.date),
+                datasets: [{
+                    label: 'Затраты, BYN',
+                    data: allPaymentsByPeriod.map(payment => payment.amount),
+                    fill: false,
+                    borderColor: '#00B98E',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        display: true
+                    },
+                    y: {
+                        display: true,
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
 
     function getDate(string) {
         var parts = string.split('-')
