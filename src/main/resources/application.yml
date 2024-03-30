@@ -4,7 +4,6 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     initialization-mode: always
-    schema: classpath:sql/schema.sql
   jpa:
     hibernate:
       ddl-auto: none
@@ -22,6 +21,7 @@ spring:
   datasource:
     username: postgres
     password: root
+    schema: classpath:sql/test-schema.sql
     data: classpath:sql/test-data.sql
     url: jdbc:postgresql://localhost:5432/finances
   thymeleaf:
@@ -33,6 +33,7 @@ spring:
 spring:
   profiles: prod
   datasource:
+    schema: classpath:sql/schema.sql
     data: classpath:sql/data.sql
     url: postgres://u9vdiri9d3vc1:pb8a58f6fbcecc93f715ff93c74236cae0e481f7909e24fcc2377b8a08276d7a9@ceu9lmqblp8t3q.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d9ebum9hpth6ei
 
