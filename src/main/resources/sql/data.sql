@@ -1,3 +1,11 @@
+DELETE FROM profile_categories;
+DELETE FROM profile;
+DELETE FROM category;
+DELETE FROM group_authorities;
+DELETE FROM authorities;
+DELETE FROM groups;
+DELETE FROM app_user;
+
 INSERT INTO app_user (username, password, enabled)
 VALUES ('admin', '$2a$12$MPR1fNKX8fSeuTbm7h/0EOpAAc//UiURywJJqTz/0wSBh3VVqqUsG', true),
        ('nastysha', '$2a$12$Fq/F5a9qD.5GQTdESTnn5et.goN.I0M7GbP2N0rernO9V8jucQMzu', true),
