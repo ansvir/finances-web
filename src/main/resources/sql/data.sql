@@ -1,10 +1,10 @@
-TRUNCATE TABLE profile_categories;
 TRUNCATE TABLE profile;
 TRUNCATE TABLE category;
-TRUNCATE TABLE group_authorities;
-TRUNCATE TABLE authorities;
-TRUNCATE TABLE groups;
+TRUNCATE TABLE profile_categories;
 TRUNCATE TABLE app_user;
+TRUNCATE TABLE groups;
+TRUNCATE TABLE authorities;
+TRUNCATE TABLE group_authorities;
 
 INSERT INTO app_user (username, password, enabled)
 VALUES ('admin', '$2a$12$MPR1fNKX8fSeuTbm7h/0EOpAAc//UiURywJJqTz/0wSBh3VVqqUsG', true),
