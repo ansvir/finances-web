@@ -22,7 +22,7 @@ spring:
   datasource:
     username: postgres
     password: root
-    data: classpath:sql/data.sql
+    data: classpath:sql/test-data.sql
     url: jdbc:postgresql://localhost:5432/finances
   thymeleaf:
     cache: false
