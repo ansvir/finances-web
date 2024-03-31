@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.tohant.financesweb.service.database.CategoryService;
@@ -45,8 +44,7 @@ public class ProfileController {
     }
 
     @PostMapping(value = "/" + PROFILE_PAGE_NAME)
-    public ModelAndView addPriority(@RequestParam(name = "default-modal-input") @Valid @NotNull @NotBlank @Size(max = 100,
-            message = "Размер имени категории не должен превышать 100 символов") String categoryName, Model model) {
+    public ModelAndView addPriority(@RequestParam(name = "default-modal-input") String categoryName, Model model) {
         categoryService.addCategory(categoryName);
         populateModel(model);
         return FinancesThymeleafUtil.buildMav(PROFILE_PAGE_NAME, model);

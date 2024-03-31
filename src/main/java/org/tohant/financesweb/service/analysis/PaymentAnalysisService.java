@@ -22,8 +22,6 @@ import static org.tohant.financesweb.service.model.PaymentDto.SUMMARY_DATE_TIME_
 @RequiredArgsConstructor
 public class PaymentAnalysisService {
 
-    private final CategoryService categoryService;
-
     public List<PaymentMonthDto> getPaymentsByMonths(List<PaymentDto> payments) {
         Map<YearMonth, BigDecimal> paymentsByMonths = payments.stream()
                 .collect(Collectors.groupingBy(payment -> YearMonth.from(LocalDateTime.parse(payment.getDateTime())),
@@ -59,19 +57,6 @@ public class PaymentAnalysisService {
             previousTotal = totalExpenses;
         }
         return sortDescendingByDate(paymentsByMonthsDtos);
-    }
-
-    public List<PaymentPeriodDto> getPaymentsByPeriod(List<PaymentDto> payments, LocalDate from, LocalDate to) {
-        return payments.stream()
-                .filter(payment -> {
-                    LocalDate date = LocalDateTime.parse(payment.getDateTime()).toLocalDate();
-                    return date.isAfter(from) && date.isBefore(to)
-                            || date.isEqual(from) || date.isEqual(to);
-                })
-                .collect(Collectors.groupingBy(payment -> LocalDateTime.parse(payment.getDateTime()).toLocalDate(),
-                        Collectors.mapping(PaymentDto::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))))
-                .entrySet().stream().map((entry) -> new PaymentPeriodDto(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
     }
 
     public SummaryStatDto getSummaryStats(List<PaymentDto> payments, List<CategoryDto> categories) {

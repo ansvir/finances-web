@@ -153,7 +153,7 @@
                             Сравнительный анализ затрат по периоду
                             <span>
                                 <a data-toggle="tooltip" data-placement="right"
-                                   title="Показывает диаграммы затрат по выбранному периоду. Кругова диаграмма показывает общее количество затрат по категориям, вторая - динамику изменений затрат во времени.">
+                                   title="Показывает диаграммы затрат по выбранному периоду. Круговая диаграмма показывает общее количество затрат по категориям, вторая - динамику изменений затрат во времени.">
                                     <img alt="Кнопка 'Подробнее'" th:src="@{/public/img/info.svg}"/>
                                 </a>
                             </span>
@@ -170,7 +170,7 @@
                                                name="prioritiesDateTo"/>
                                     </div>
                                     <div class="col-md-2">
-                                        <button id="submitPeriod" class="btn btn-dark border-0 w-25" type="submit">
+                                        <button id="submitPeriod" class="btn btn-dark border-0 w-25" type="button">
                                             <img class="img-fluid" th:src="@{public/img/search-solid.svg}"/>
                                         </button>
                                     </div>
@@ -189,13 +189,16 @@
                             <div class="col-md-4">
                                 <div class="card border-0">
                                     <div class="card-body">
+                                        <h2 id="noDataDoughnut">Нет данных</h2>
                                         <canvas id="prioritiesPaymentsChart"></canvas>
+
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <div class="card align-content-center border-0">
                                     <div class="card-body">
+                                        <h2 id="noDataLine">Нет данных</h2>
                                         <canvas id="paymentsByPeriodLine"></canvas>
                                     </div>
                                 </div>
@@ -304,79 +307,14 @@
         })
     });
     /*<![CDATA[*/
-    var paymentsByPeriod = /*[[${paymentsByPeriod}]]*/ [];
-    var allPaymentsByPeriod = /*[[${allPaymentsByPeriod}]]*/ [];
-    var periodFrom = /*[[${period.prioritiesDateFrom}]]*/ '2000-01-01'
-    var periodTo = /*[[${period.prioritiesDateTo}]]*/ '2025-12-01'
+    var payments = /*[[${payments}]]*/ []
+    var categoriesMap = /*[[${categoriesMap}]]*/ []
     /*]]>*/
-    console.log(periodTo)
-    var periodFromDate = getDate(periodFrom)
-    var periodToDate = getDate(periodTo)
-    document.getElementById('prioritiesDateFrom').valueAsDate = periodFromDate
-    document.getElementById('prioritiesDateTo').valueAsDate = periodToDate
-    const ctx = document.getElementById('prioritiesPaymentsChart');
-    const noContent = document.createElement("h2");
-    noContent.innerText = "Нет данных";
-    if (paymentsByPeriod.filter(payment => payment.amount > 0).length === 0) {
-        ctx.parentNode.replaceChild(noContent, ctx)
-    } else {
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: paymentsByPeriod.map(p => p.category.name),
-                datasets: [{
-                    label: 'BYN',
-                    data: paymentsByPeriod.map(p => p.amount),
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        display: false
-                    },
-                    y: {
-                        display: false
-                    }
-                }
-            }
-        });
-    }
 
-    const ctx2 = document.getElementById('paymentsByPeriodLine');
-    const noContent2 = document.createElement("h2");
-    noContent2.innerHTML = "<h2>Нет данных</h2>";
-
-    if (allPaymentsByPeriod.length === 0) {
-        ctx2.parentNode.replaceChild(noContent2, ctx2)
-    } else {
-        new Chart(ctx2, {
-            type: 'line',
-            data: {
-                labels: allPaymentsByPeriod.map(payment => payment.date).reverse(),
-                datasets: [{
-                    label: 'Затраты, BYN',
-                    data: allPaymentsByPeriod.map(payment => payment.amount).reverse(),
-                    fill: false,
-                    borderColor: '#00B98E',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        display: true
-                    },
-                    y: {
-                        display: true,
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            }
-        });
-    }
+    const minDate = findPaymentWithMinDate(payments);
+    const maxDate = findPaymentWithMaxDate(payments);
+    const from = document.getElementById('prioritiesDateFrom').valueAsDate = getDate(minDate.dateTime)
+    const to = document.getElementById('prioritiesDateTo').valueAsDate = getDate(maxDate.dateTime)
 
     document.getElementById('todayDate').addEventListener('click', function(e) {
         document.getElementById('prioritiesDateFrom').valueAsDate = new Date()
@@ -397,6 +335,174 @@
         $('#submitPeriod').click()
     })
 
+    document.getElementById('submitPeriod').addEventListener('click', function (e) {
+        const ctx = document.getElementById('prioritiesPaymentsChart');
+        let chartStatusCtx = Chart.getChart("prioritiesPaymentsChart");
+        if (chartStatusCtx !== undefined) {
+            chartStatusCtx.destroy();
+        }
+        const from = document.getElementById('prioritiesDateFrom').valueAsDate
+        const to = document.getElementById('prioritiesDateTo').valueAsDate
+        to.setDate(to.getDate() + 1)
+        const noDataDoughnut = $('#noDataDoughnut')
+        const groupedPaymentsByCategory = groupPaymentsByCategory(payments, categoriesMap, from, to)
+        console.log(groupedPaymentsByCategory)
+        if (groupedPaymentsByCategory.filter(payment => payment.amount > 0).length === 0) {
+            ctx.visible = false
+            noDataDoughnut.show()
+        } else {
+            noDataDoughnut.hide()
+            ctx.visible = true
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: groupedPaymentsByCategory.map(p => p.category.name),
+                    datasets: [{
+                        label: 'BYN',
+                        data: groupedPaymentsByCategory.map(p => p.amount),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            display: false
+                        },
+                        y: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        const ctx2 = document.getElementById('paymentsByPeriodLine');
+        let chartStatusCtx2 = Chart.getChart("paymentsByPeriodLine");
+        if (chartStatusCtx2 !== undefined) {
+            chartStatusCtx2.destroy();
+        }
+        const noDataLine = $('#noDataLine')
+
+        const groupedPaymentsByDate = groupPaymentsByDate(payments, from, to).reverse()
+
+        if (groupedPaymentsByDate.length === 0) {
+            noDataLine.show()
+            ctx2.visible = false
+        } else {
+            noDataLine.hide()
+            ctx2.visible = true
+            new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: groupedPaymentsByDate.map(payment => payment.date).reverse(),
+                    datasets: [{
+                        label: 'Затраты, BYN',
+                        data: groupedPaymentsByDate.map(payment => payment.amount).reverse(),
+                        fill: false,
+                        borderColor: '#00B98E',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            display: true
+                        },
+                        y: {
+                            display: true,
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    })
+
+    $('#submitPeriod').click()
+
+    function groupPaymentsByCategory(payments, categoriesMap, from, to) {
+        const groupedPayments = payments.filter(payment => {
+            const date = getDate(payment.dateTime.split('T')[0]);
+            return date >= from && date <= to
+        }).reduce((result, payment) => {
+            const categoryId = payment.categoryId;
+            const category = categoriesMap[categoryId];
+
+            if (category) {
+                if (!result[categoryId]) {
+                    result[categoryId] = {
+                        category: category,
+                        amount: payment.amount
+                    };
+                } else {
+                    result[categoryId].amount += payment.amount;
+                }
+            }
+
+            return result;
+        }, {});
+
+        return Object.values(groupedPayments);
+    }
+
+    function groupPaymentsByDate(payments, from, to) {
+        const groupedPayments = payments.filter(payment => {
+            const date = getDate(payment.dateTime.split('T')[0]);
+            return date >= from && date <= to
+        }).reduce((result, payment) => {
+            const date = payment.dateTime.split('T')[0];
+
+            if (!result[date]) {
+                result[date] = {
+                    date: date,
+                    amount: payment.amount
+                };
+            } else {
+                result[date].amount += payment.amount;
+            }
+
+            return result;
+        }, {});
+
+        return Object.values(groupedPayments);
+    }
+
+    function findPaymentWithMinDate(payments) {
+        if (payments.length === 0) {
+            return null;
+        }
+
+        return payments.reduce((minPayment, payment) => {
+            const currentDate = new Date(payment.dateTime);
+            const minDate = minPayment ? new Date(minPayment.dateTime) : null;
+
+            if (!minDate || currentDate < minDate) {
+                return payment;
+            }
+
+            return minPayment;
+        }, null);
+    }
+
+    function findPaymentWithMaxDate(payments) {
+        if (payments.length === 0) {
+            return null;
+        }
+
+        return payments.reduce((maxPayment, payment) => {
+            const currentDate = new Date(payment.dateTime);
+            const maxDate = maxPayment ? new Date(maxPayment.dateTime) : null;
+
+            if (!maxDate || currentDate > maxDate) {
+                return payment;
+            }
+
+            return maxPayment;
+        }, null);
+    }
+
     function getDate(string) {
         var parts = string.split('-')
         var date = Number.parseInt(parts[2])
@@ -405,6 +511,7 @@
         newDate.setDate(newDate.getDate() + 1)
         return newDate
     }
+
 </script>
 </body>
 

@@ -5,10 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -23,11 +19,7 @@ public class PaymentDto extends HttpResponseDto {
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     public static final DateTimeFormatter SUMMARY_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MMM uuuu", Locale.forLanguageTag("ru"));
 
-    @Size(max = 100, message = "Длина описания не должна превышать 100 символов")
     private String name;
-    @NotNull
-    @Max(value = 999999, message = "Максимальная сумма может быть равна 999999")
-    @Positive(message = "Сумма затрат должна быть равно нуля или более")
     private BigDecimal amount;
     private String categoryId;
     private String dateTime;

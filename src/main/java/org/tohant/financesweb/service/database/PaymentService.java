@@ -84,24 +84,4 @@ public class PaymentService implements IService<PaymentDto, Long> {
         return paymentRepository.count();
     }
 
-    public List<PaymentCategoryPeriodDto> findAllByPeriodGroupedByCategories(LocalDate from, LocalDate to) {
-        String currentUser = SecurityContextHolder.getContext()
-                .getAuthentication().getName();
-        List<Category> categories = userRepository.findByUsername(currentUser)
-                .map(user -> categoryRepository.findAllByUsernameOrderByPriority(currentUser))
-                .orElseThrow(() -> new EntityNotFoundException("No user found for username: " + currentUser));
-        List<Payment> payments = paymentRepository.findAllByUsername(currentUser);
-        Map<CategoryDto, BigDecimal> paymentsByPeriod = payments.stream()
-                .filter(payment -> {
-                    LocalDate date = payment.getDateTime().toLocalDate();
-                    return date.isAfter(from) && date.isBefore(to)
-                            || date.isEqual(from) || date.isEqual(to);
-                })
-                .collect(Collectors.groupingBy(payment -> categoryMapper.toDto(payment.getCategory()),
-                        Collectors.mapping(Payment::getAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))));
-        return categories.stream()
-                .map(category -> new PaymentCategoryPeriodDto(categoryMapper.toDto(category), paymentsByPeriod.getOrDefault(categoryMapper.toDto(category), BigDecimal.ZERO)))
-                .collect(Collectors.toList());
-    }
-
 }
