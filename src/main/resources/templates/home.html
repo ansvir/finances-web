@@ -97,7 +97,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="payment : ${#lists.sort(payments, #futils.getPaymentDateComparator())}">
+                            <tr th:each="payment : ${payments}">
                                 <td th:text="${payment.name}"></td>
                                 <td th:text="${#numbers.formatDecimal(payment.amount, 1, 2)}"></td>
                                 <td th:text="${categoriesMap[payment.categoryId].name}"></td>
@@ -126,7 +126,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="payment : ${#lists.sort(paymentsByMonth, #futils.getPaymentMonthDateComparator())}">
+                            <tr th:each="payment : ${paymentsByMonth}">
                                 <td th:text="${payment.date}"></td>
                                 <td>
                                     <div class="progress" role="progressbar" aria-label="Сравнение с предыдущим месяцем"
@@ -268,7 +268,7 @@
 <script th:src="@{/public/lib/waypoints/waypoints.min.js}"></script>
 <script th:src="@{/public/lib/owlcarousel/owl.carousel.min.js}"></script>
 <script th:src="@{/public/lib/custom.js}"></script>
-<script th:inline="javascript" type="application/javascript">
+<script th:inline="none">
     $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip()
         $('#paymentsTable').dataTable({
@@ -286,7 +286,8 @@
                     next: 'Следующая',
                     previous: 'Предыдущая'
                 }
-            }
+            },
+            order: [ [3, 'desc'] ]
         })
         $('#paymentsAnalysisTable').dataTable({
             language: {
@@ -303,9 +304,13 @@
                     next: 'Следующая',
                     previous: 'Предыдущая'
                 }
-            }
+            },
+            ordering: false
         })
     });
+</script>
+<script th:inline="javascript" type="application/javascript">
+
     /*<![CDATA[*/
     var payments = /*[[${payments}]]*/ []
     var categoriesMap = /*[[${categoriesMap}]]*/ []
@@ -383,7 +388,7 @@
         }
         const noDataLine = $('#noDataLine')
 
-        const groupedPaymentsByDate = groupPaymentsByDate(payments, from, to).reverse()
+        const groupedPaymentsByDate = groupPaymentsByDate(payments, from, to)
 
         if (groupedPaymentsByDate.length === 0) {
             noDataLine.show()
@@ -394,10 +399,10 @@
             new Chart(ctx2, {
                 type: 'line',
                 data: {
-                    labels: groupedPaymentsByDate.map(payment => payment.date).reverse(),
+                    labels: groupedPaymentsByDate.map(payment => payment.date),
                     datasets: [{
                         label: 'Затраты, BYN',
-                        data: groupedPaymentsByDate.map(payment => payment.amount).reverse(),
+                        data: groupedPaymentsByDate.map(payment => payment.amount),
                         fill: false,
                         borderColor: '#00B98E',
                         tension: 0.1

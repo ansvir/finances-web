@@ -60,7 +60,6 @@ public class ProfileService implements IService<ProfileDto, Long> {
         return profileRepository.count();
     }
 
-    @CacheEvict("categoriesCache")
     public void deleteCategoryFromProfile(Long reassignedCategoryId, Long deletedCategoryId) {
         String currentUser = SecurityContextHolder.getContext()
                 .getAuthentication().getName();
