@@ -56,7 +56,9 @@ public class PaymentAnalysisService {
 
             previousTotal = totalExpenses;
         }
-        return sortDescendingByDate(paymentsByMonthsDtos);
+        return paymentsByMonthsDtos.stream()
+                .sorted(Comparator.comparing(PaymentMonthDto::getDate, Comparator.reverseOrder()))
+                .collect(Collectors.toList());
     }
 
     public SummaryStatDto getSummaryStats(List<PaymentDto> payments, List<CategoryDto> categories) {
@@ -81,13 +83,6 @@ public class PaymentAnalysisService {
                 () -> summary.setCategoryName("Нет данных"));
         summary.setAllExpenses(totalExpenses);
         return summary;
-    }
-
-    private List<PaymentMonthDto> sortDescendingByDate(List<PaymentMonthDto> payments) {
-        return payments.stream().sorted((payment1, payment2) -> payment1.getDate().isBefore(payment2.getDate())
-                        ? 1 : payment1.getDate().isEqual(payment2.getDate())
-                        ? 0 : -1)
-                .collect(Collectors.toList());
     }
 
 }
