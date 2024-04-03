@@ -9,20 +9,29 @@
         <ul class="justify-content-around align-content-around nav w-100">
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/home}">
-                    <img alt="Кнопка 'Домой'" class="img-fluid" th:src="@{public/img/home.svg}"/>
+                    <img alt="Кнопка 'Домой'" class="img-fluid" th:src="@{/img/home.svg}"/>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/profile}">
-                    <img alt="Кнопка профиля" class="img-fluid " th:src="@{public/img/profile.svg}"/>
+                    <img alt="Кнопка профиля" class="img-fluid " th:src="@{/img/profile.svg}"/>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/logout}">
-                    <img alt="Кнопка выйти" class="img-fluid" th:src="@{public/img/logout.svg}"/>
+                    <img alt="Кнопка выйти" onclick="googleLogout()" class="img-fluid" th:src="@{/img/logout.svg}"/>
                 </a>
             </li>
         </ul>
 </nav>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script>
+    function googleLogout() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+            console.log('User signed out.');
+        });
+    }
+</script>
 </body>
 </html>

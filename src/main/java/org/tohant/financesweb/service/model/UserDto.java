@@ -1,6 +1,5 @@
 package org.tohant.financesweb.service.model;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,10 +14,12 @@ import java.util.List;
 @Setter
 public class UserDto extends User {
 
+    private String googleId;
     private List<CategoryDto> categories;
 
-    public UserDto(String username, String password, Collection<? extends GrantedAuthority> authorities, List<CategoryDto> categories) {
+    public UserDto(String googleId, String username, String password, Collection<? extends GrantedAuthority> authorities, List<CategoryDto> categories) {
         super(username, password, authorities);
+        this.googleId = googleId;
         this.categories = categories;
     }
 

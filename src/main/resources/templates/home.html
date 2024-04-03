@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
 <head>
@@ -22,14 +22,14 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css">
 
     <!-- Libraries Stylesheet -->
-    <link th:href="@{/public/lib/animate/animate.min.css}" rel="stylesheet">
-    <link th:href="@{/public/lib/owlcarousel/assets/owl.carousel.min.css}" rel="stylesheet">
+    <link th:href="@{/lib/animate/animate.min.css}" rel="stylesheet">
+    <link th:href="@{/lib/owlcarousel/assets/owl.carousel.min.css}" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link th:href="@{/public/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link th:href="@{/public/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 
 <body>
@@ -83,7 +83,7 @@
                             <span>
                                 <a data-toggle="tooltip" data-placement="right"
                                    title="Показывает список платежей за всё время.">
-                                    <img alt="Кнопка 'Подробнее'" th:src="@{/public/img/info.svg}"/>
+                                    <img alt="Кнопка 'Подробнее'" th:src="@{/img/info.svg}"/>
                                 </a>
                             </span>
                         </h2>
@@ -114,7 +114,7 @@
                             <span>
                                 <a data-toggle="tooltip" data-placement="right"
                                    title="Показывает затраты (%) по сравнению с предыдущим месяцем.">
-                                    <img alt="Кнопка 'Подробнее'" th:src="@{/public/img/info.svg}"/>
+                                    <img alt="Кнопка 'Подробнее'" th:src="@{/img/info.svg}"/>
                                 </a>
                             </span>
                         </h2>
@@ -154,7 +154,7 @@
                             <span>
                                 <a data-toggle="tooltip" data-placement="right"
                                    title="Показывает диаграммы затрат по выбранному периоду. Круговая диаграмма показывает общее количество затрат по категориям, вторая - динамику изменений затрат во времени.">
-                                    <img alt="Кнопка 'Подробнее'" th:src="@{/public/img/info.svg}"/>
+                                    <img alt="Кнопка 'Подробнее'" th:src="@{/img/info.svg}"/>
                                 </a>
                             </span>
                         </h2>
@@ -171,7 +171,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <button id="submitPeriod" class="btn btn-dark border-0 w-25" type="button">
-                                            <img class="img-fluid" th:src="@{public/img/search-solid.svg}"/>
+                                            <img class="img-fluid" th:src="@{/img/search-solid.svg}"/>
                                         </button>
                                     </div>
                                     <div class="col-md-2 d-flex gap-2 justify-content-end align-items-center w-50">
@@ -212,7 +212,7 @@
                             Итоги затрат
                             <span>
                                 <a data-toggle="tooltip" data-placement="right" title="Итоговые показатели затрат.">
-                                    <img alt="Кнопка 'Подробнее'" th:src="@{/public/img/info.svg}"/>
+                                    <img alt="Кнопка 'Подробнее'" th:src="@{/img/info.svg}"/>
                                 </a>
                             </span>
                         </h2>
@@ -263,11 +263,11 @@
 <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script th:src="@{/public/lib/wow/wow.min.js}"></script>
-<script th:src="@{/public/lib/easing/easing.min.js}"></script>
-<script th:src="@{/public/lib/waypoints/waypoints.min.js}"></script>
-<script th:src="@{/public/lib/owlcarousel/owl.carousel.min.js}"></script>
-<script th:src="@{/public/lib/custom.js}"></script>
+<script th:src="@{/lib/wow/wow.min.js}"></script>
+<script th:src="@{/lib/easing/easing.min.js}"></script>
+<script th:src="@{/lib/waypoints/waypoints.min.js}"></script>
+<script th:src="@{/lib/owlcarousel/owl.carousel.min.js}"></script>
+<script th:src="@{/lib/custom.js}"></script>
 <script th:inline="none">
     $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip()

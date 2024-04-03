@@ -4,12 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.tohant.financesweb.mapper.CategoryMapper;
 import org.tohant.financesweb.mapper.UserMapper;
 import org.tohant.financesweb.repository.db.UserRepository;
-import org.tohant.financesweb.repository.entity.User;
 import org.tohant.financesweb.service.IService;
 import org.tohant.financesweb.service.model.UserDto;
+import org.tohant.financesweb.service.model.UserLoginDto;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -51,6 +50,24 @@ public class UserService implements IService<UserDto, Long> {
     public UserDto findByUsername(String username) {
         return userMapper.toDto(userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("No such user: " + username)));
+    }
+
+    public UserDto findByGoogleId(String googleId) {
+        return userMapper.toDto(userRepository.findByGoogleId(googleId)
+                .orElseThrow(() -> new EntityNotFoundException("No such user found by google id")));
+    }
+
+    public UserDto getUserOrNull(UserLoginDto userLoginDto) {
+        try {
+            UserDto userByGoogleId = findByGoogleId(userLoginDto.getGoogleId());
+            if (userByGoogleId != null) {
+                return userByGoogleId;
+            }
+            return findByUsername(userLoginDto.getUsername());
+        } catch (EntityNotFoundException e) {
+            log.warn("User not found. Username: " + userLoginDto.getUsername());
+            return null;
+        }
     }
 
 }

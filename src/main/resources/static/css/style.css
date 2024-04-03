@@ -1,3 +1,14 @@
+.gradient-primary {
+    /* fallback for old browsers */
+    background: #00B98E;
+
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(to right, #00B98E, #EFFDF5);
+
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right, #00B98E, #EFFDF5)
+}
+
 /********** Template CSS **********/
 :root {
     --primary: #00B98E;

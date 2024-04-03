@@ -9,14 +9,14 @@
     <div class="container-fluid bg-transparent">
         <a th:href="@{/home}" class="navbar-brand d-flex align-items-center text-center">
             <div class="icon p-2 me-2">
-                <img class="img-fluid" th:src="@{/public/img/logo.svg}" alt="Логотип приложения"
+                <img class="img-fluid" th:src="@{/img/logo.svg}" alt="Логотип приложения"
                      style="width: 30px; height: 30px;">
             </div>
             <h1 class="m-0 text-primary">Финансы</h1>
         </a>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto">
-                <a th:href="@{/logout}" class="nav-item btn btn-dark px-3 d-none d-lg-flex">Выйти</a>
+                <a th:href="@{/logout}" onclick="googleLogout()" class="nav-item btn btn-dark px-3 d-none d-lg-flex">Выйти</a>
                 <a th:href="@{/profile}" class="nav-item btn btn-dark px-3 d-none d-lg-flex mx-2">
                     Профиль
                 </a>
@@ -25,5 +25,14 @@
         </div>
     </div>
 </nav>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script>
+    function googleLogout() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+            console.log('User signed out.');
+        });
+    }
+</script>
 </body>
 </html>

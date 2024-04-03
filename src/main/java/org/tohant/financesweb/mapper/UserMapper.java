@@ -17,15 +17,17 @@ public class UserMapper {
     private final CategoryMapper categoryMapper;
 
     public UserDto toDto(org.tohant.financesweb.repository.entity.User user) {
-        return new UserDto(user.getUsername(), user.getPassword(),
-                List.of(new SimpleGrantedAuthority("USER")), user.getProfile().getCategories().stream()
-                .map(categoryMapper::toDto)
-                .collect(Collectors.toList()));
+        return new UserDto(user.getGoogleId(), user.getUsername(), user.getPassword(),
+                List.of(new SimpleGrantedAuthority("USER")),
+                user.getProfile().getCategories().stream()
+                        .map(categoryMapper::toDto)
+                        .collect(Collectors.toList()));
     }
 
     public org.tohant.financesweb.repository.entity.User toEntity(UserDto user) {
         org.tohant.financesweb.repository.entity.User userEntity = new org.tohant.financesweb.repository.entity.User();
         userEntity.setUsername(user.getUsername());
+        userEntity.setGoogleId(user.getGoogleId());
         userEntity.setPassword(user.getPassword());
         return userEntity;
     }

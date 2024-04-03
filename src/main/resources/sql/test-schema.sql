@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS app_user CASCADE;
 CREATE TABLE IF NOT EXISTS app_user
 (
     username VARCHAR(255) PRIMARY KEY,
+    google_id TEXT,
     password VARCHAR(255) NOT NULL,
     enabled  BOOLEAN      NOT NULL
 );

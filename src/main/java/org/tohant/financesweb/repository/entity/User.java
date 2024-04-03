@@ -17,6 +17,8 @@ public class User {
     @Column(nullable = false)
     private String username;
 
+    private String googleId;
+
     @Column(nullable = false)
     private String password;
 
